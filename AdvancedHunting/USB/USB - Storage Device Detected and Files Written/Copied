@@ -1,0 +1,26 @@
+//query MiscEvents table for all occurrences of usb storage plug and play AlertEvents and then
+//finds all file creations and modifications by a user on USB storage device
+//joins both tables so output shows both USB events and File creation events
+//jesse.esquivel@microsoft.com
+let usbdevices = MiscEvents
+    | where ActionType == 'PnpDeviceConnected'
+    | extend PNP = parsejson(AdditionalFields) 
+    | extend ClassName = PNP.ClassName 
+    | extend PnPDeviceId = PNP.DeviceId 
+    | extend DeviceDescription = PNP.DeviceDescription
+    | extend VendorId = split(PNP.VendorIds,@'\r\n\t\t')
+    | extend VendorId = PNP.VendorIds
+    | where PnPDeviceId startswith @'USBSTOR\'
+    | project EventTime, ComputerName, MachineId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId;
+FileCreationEvents
+//| where EventTime > ago(1d) 
+| where ActionType == "FileCreated" or ActionType == "FileModified"
+| where FolderPath !startswith "C:"
+| where FolderPath !startswith "\\" 
+| where InitiatingProcessAccountName != "NETWORK SERVICE"
+| where InitiatingProcessAccountName != "SYSTEM"
+| where InitiatingProcessAccountName != "LOCAL SERVICE"
+| join kind = inner(usbdevices) on MachineId
+| summarize arg_max(InitiatingProcessCreationTime, *) by EventTime
+| project EventTime, ComputerName, InitiatingProcessAccountName, ActionType, FolderPath, 
+    InitiatingProcessCreationTime, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
