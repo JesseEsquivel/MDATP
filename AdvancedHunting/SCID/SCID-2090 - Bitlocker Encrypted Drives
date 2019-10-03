@@ -1,0 +1,8 @@
+//query for Bitlocker compliance via SCID-2090 via configuration assessment schema
+//Only 1803+ are assessed for this security control in MDATP
+//jesse.esquivel@microsoft.com
+DeviceTvmSecureConfigurationAssessment
+| where ConfigurationSubcategory == "Bitlocker"
+| where ConfigurationId == "scid-2090"
+| summarize MachineCount=dcount(ComputerName) by IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
+| project MachineCount, IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
