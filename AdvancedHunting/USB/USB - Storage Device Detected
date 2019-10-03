@@ -1,0 +1,17 @@
+//query MiscEvents table for all occurrences of usb storage plug and play AlertEvents
+//shows all events for insertion of a usb storage device
+//use this query for a custom detection rule
+//jesse.esquivel@microsoft.com
+//commented lines show new Kusto table and column names effective "in the coming weeks:" https://techcommunity.microsoft.com/t5/Microsoft-Defender-ATP/Advanced-hunting-updates-USB-events-machine-level-actions-and/ba-p/824152
+MiscEvents //DeviceEvents
+| where ActionType == 'PnpDeviceConnected'
+| extend PNP = parsejson(AdditionalFields) 
+| extend ClassName = PNP.ClassName 
+| extend PnPDeviceId = PNP.DeviceId 
+| extend DeviceDescription = PNP.DeviceDescription
+| extend VendorId = split(PNP.VendorIds,@'\r\n\t\t')
+| extend VendorId = PNP.VendorIds
+| where PnPDeviceId startswith @'USBSTOR\'
+| project EventTime, ComputerName, MachineId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
+| sort by EventTime desc 
+// | project TimeStamp, DeviceName, DeviceID, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
