@@ -1,4 +1,4 @@
-﻿<#
+<#
 ##################################################################################################################
 #
 # Microsoft Premier Field Engineering
@@ -119,6 +119,12 @@ Function closeScript($exitCode)
 }
 
 ##################################################################################################################
+# Prerequisites  - Place all infinity stones into infinity guantlet to prepare for migration
+##################################################################################################################
+
+
+
+##################################################################################################################
 # Begin Script  - please do not change unless you know what you are doing
 ##################################################################################################################
 
@@ -143,6 +149,7 @@ catch
     log-This $errorEvent "Failed to download package https://go.microsoft.com/fwlink/?LinkID=121721&arch=x64 with error:  $($_.Exception.Message)"
     closescript 1
 }
+
 Write-Host "Success." -ForegroundColor Green
 log-This $infoEvent "Successfully fetched Security Intelligence Package: $vdmPackage"
 Write-Host
@@ -152,17 +159,41 @@ cmd /c "cd $vdmpath & mpam-fe.exe /x"
 Write-Host "Success." -ForegroundColor Green
 Write-Host
 
-Write-Host "Copying extracted files to share..."
-Copy-Item -Path $vdmpath -Destination "\\fileserver.fqdn\mdatp$\wdav-update" -Force -Recurse | Out-Null
-Get-ChildItem "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Recurse | ForEach-Object {Remove-Item $_.FullName -Recurse -Force}
-Copy-Item -Path $vdmpackage -Destination "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Force -Recurse | Out-Null
+try
+{
+    Write-Host "Copying extracted files to share..."
+    Copy-Item -Path $vdmpath -Destination "\\fileserver.fqdn\mdatp$\wdav-update" -Force -Recurse | Out-Null
+    Get-ChildItem "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Recurse | ForEach-Object {Remove-Item $_.FullName -Recurse -Force}
+    Copy-Item -Path $vdmpath\* -Destination "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Force -Recurse | Out-Null
+    Write-Host "Success." -ForegroundColor Green
+    Write-Host
+}
+catch
+{
+    Write-Host "Failed to copy extracted files to share \\fileserver.fqdn\mdatp$\: $($_.Exception.Message)" -ForegroundColor Red
+    log-This $errorEvent "Failed to copy extracted files to share \\fileserver.fqdn\mdatp$\: $($_.Exception.Message)"
+    closescript 1
+}
+
 Write-Host "Success." -ForegroundColor Green
+log-This $infoEvent "Successfully copied extracted files to share: \\fileserver.fqdn\mdatp$\wdav-update\x64"
 Write-Host
 
-Write-Host "Pruning Folders older than 7 days..."
-Prune-Folders "-7" "\\fileserver.fqdn\mdatp$\wdav-update"
-Prune-Folders "-7" "C:\Windows\wdav-update"
+try
+{
+    Write-Host "Pruning Folders older than 7 days..."
+    Prune-Folders "-7" "\\fileserver.fqdn\mdatp$\wdav-update"
+    Prune-Folders "-7" "C:\Windows\wdav-update"
+}
+catch
+{
+    Write-Host "Failed to prune folders older than 7 days: $($_.Exception.Message)" -ForegroundColor Red
+    log-This $errorEvent "Failed to prune folders older than 7 days: $($_.Exception.Message)"
+    closescript 1
+}
+
 Write-Host "Success." -ForegroundColor Green
+log-This $infoEvent "Successfully pruned folders older than 7 days in C:\Windows\wdav-update, and in \\fileserver.fqdn\mdatp$\wdav-update"
 Write-Host
 
 closescript 0
