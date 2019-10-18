@@ -1,9 +1,0 @@
-//query MiscEvents table for all occurrences of CFA audit events
-//Use this data to assess impact of CFA rules, and possibly make exceptions for known/trusted binaries
-//jesse.esquivel@microsoft.com
-//All audited events for controlled folder access
-MiscEvents
-| where ActionType == "ControlledFolderAccessViolationAudited"
-| extend RuleGuid = tolower(tostring(parsejson(AdditionalFields).RuleId))
-| summarize DevicesImpacted=dcount(ComputerName) by InitiatingProcessFolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine, ActionType, RuleGuid
-| project DevicesImpacted, InitiatingProcessFolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine, ActionType, RuleGuid
