@@ -1,9 +1,12 @@
-//query MiscEvents table for all occurrences of usb storage plug and play AlertEvents
-//shows all events for insertion of a usb storage device
-//use this query for a custom detection rule
+//query Deviceinfo table for all loggedon users and then finds occurrences of usb storage plug and play DeviceAlertEvents
+//and joins both tables so output shows both USB events and loggedon user
 //jesse.esquivel@microsoft.com
-//commented lines show new Kusto table and column names effective "in the coming weeks:" https://techcommunity.microsoft.com/t5/Microsoft-Defender-ATP/Advanced-hunting-updates-USB-events-machine-level-actions-and/ba-p/824152
-MiscEvents //DeviceEvents
+let loggedOnUsers = DeviceInfo
+    | extend data=parsejson(LoggedOnUsers)
+    | mv-expand data
+    | extend userName = data.UserName
+    | project userName, DeviceId, Timestamp;
+DeviceEvents
 | where ActionType == 'PnpDeviceConnected'
 | extend PNP = parsejson(AdditionalFields) 
 | extend ClassName = PNP.ClassName 
@@ -12,6 +15,8 @@ MiscEvents //DeviceEvents
 | extend VendorId = split(PNP.VendorIds,@'\r\n\t\t')
 | extend VendorId = PNP.VendorIds
 | where PnPDeviceId startswith @'USBSTOR\'
-| project EventTime, ComputerName, MachineId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
-| sort by EventTime desc 
-// | project TimeStamp, DeviceName, DeviceID, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
+| project Timestamp, DeviceName, DeviceId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
+| join kind = inner(loggedOnUsers) on DeviceId
+| summarize arg_max(Timestamp1, *) by Timestamp
+| project-away DeviceId1, Timestamp1 
+| sort by Timestamp desc
