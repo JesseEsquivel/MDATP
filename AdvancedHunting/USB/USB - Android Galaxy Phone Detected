@@ -1,0 +1,20 @@
+let loggedOnUser = DeviceInfo
+    | extend data=parsejson(LoggedOnUsers)
+    | mv-expand data
+    | extend userName = data.UserName
+    | project userName, DeviceId, Timestamp;
+DeviceEvents
+    | where ActionType == 'PnpDeviceConnected'
+    | extend PNP = parsejson(AdditionalFields) 
+    | extend ClassName = PNP.ClassName 
+    | extend PnPDeviceId = PNP.DeviceId 
+    | extend DeviceDescription = PNP.DeviceDescription
+    | extend VendorId = split(PNP.VendorIds,@'\r\n\t\t')
+    | extend VendorId = PNP.VendorIds
+    | where PnPDeviceId startswith @'USB\'
+    | where DeviceDescription contains @'Galaxy'
+    | project Timestamp, DeviceName, DeviceId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
+    | join kind = inner(loggedOnUser) on DeviceId
+    | summarize arg_max(Timestamp1, *) by Timestamp
+    | project-away DeviceId1, Timestamp1  
+    | sort by Timestamp desc
