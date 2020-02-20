@@ -1,0 +1,5 @@
+DeviceNetworkInfo
+| where NetworkAdapterStatus == "Up"
+| extend data=parsejson(ConnectedNetworks)
+| mv-expand data
+| project data.Name, data.Description, data.IsConnectedToInternet, data.Category
