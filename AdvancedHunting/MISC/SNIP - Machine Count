@@ -1,0 +1,4 @@
+  DeviceInfo
+| summarize machineCount=dcount(DeviceName) by ClientVersion
+| order by machineCount desc 
+| project machineCount, ClientVersion
