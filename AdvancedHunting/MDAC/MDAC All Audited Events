@@ -1,0 +1,14 @@
+//query DeviceEvents table for all occurrences of WDAC audit events
+//Use this data to assess impact of MDAC UMCI policies
+//jesse.esquivel@microsoft.com
+//All audited events for MDAC
+DeviceEvents
+| where ActionType startswith "AppControl"
+| where ActionType contains "Audited"
+| where FileName !endswith "ni.dll"
+| where FileName !endswith "ni.exe"
+| where FolderPath !contains @"\Device\HarddiskVolume3\Windows\assembly\NativeImages_v2.0.50727_"
+| where FolderPath !contains @"\Device\HarddiskVolume3\Windows\Microsoft.NET\assembly\GAC_MSIL\"
+| where FileName !endswith ".tmp"
+| summarize DevicesImpacted=dcount(DeviceName) by FileName, ActionType
+| project DevicesImpacted, FileName, ActionType
