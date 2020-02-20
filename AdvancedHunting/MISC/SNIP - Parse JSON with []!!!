@@ -1,3 +1,5 @@
+//parse that pesky JSON contained within brackets
+//jesse.esquivel@microsoft.com
 DeviceNetworkInfo
 | where NetworkAdapterStatus == "Up"
 | extend data=parsejson(ConnectedNetworks)
