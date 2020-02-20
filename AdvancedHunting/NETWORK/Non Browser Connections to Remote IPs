@@ -1,0 +1,13 @@
+DeviceNetworkEvents
+| where Timestamp > ago(24h)
+//filter out browser traffic
+| where InitiatingProcessFileName != 'chrome.exe' and InitiatingProcessFileName != 'firefox.exe' and InitiatingProcessFileName != 'iexplore.exe' and InitiatingProcessFileName notcontains 'MicrosoftEdge'
+    and InitiatingProcessFileName != 'mcdatrep.exe' and InitiatingProcessFileName != 'GoogleUpdate.exe' and InitiatingProcessFileName != 'mcshield.exe' and InitiatingProcessFileName != 'a8cli.exe'
+    and InitiatingProcessFileName != 'fcag.exe'
+//filter out known good destinations
+| where RemoteUrl !contains 'microsoft' and RemoteUrl !endswith 'live.com' and RemoteUrl !endswith 'windows.net' and RemoteUrl !endswith 'windows.com'  and RemoteUrl !endswith '.mil'
+    and RemoteUrl !endswith 'adobe.com' and RemoteUrl !endswith 'acrobat.com'  and RemoteUrl !endswith 'adobe.io' and RemoteUrl != 'cloud.gti.mcafee.com' and RemoteUrl !endswith 'windowsupdate.com' 
+| where RemoteIPType == 'Public'
+| where ActionType != 'ConnectionFailed'
+| project Timestamp, DeviceName, RemoteIP, RemotePort, RemoteUrl, Protocol, InitiatingProcessFileName, 
+    InitiatingProcessCommandLine, InitiatingProcessAccountName
