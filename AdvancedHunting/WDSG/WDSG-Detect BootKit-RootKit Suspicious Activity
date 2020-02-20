@@ -1,13 +1,13 @@
-//query MiscEvents table for all occurrences of failed system guard boot integrity validations
+//query DeviceEvents table for all occurrences of failed system guard boot integrity validations
 //shows all events for systems whose Windows 10 boot process has been tampered with and therefore measured boot validation fails
-//commented lines show new Kusto table and column names effective "in the coming weeks:" https://techcommunity.microsoft.com/t5/Microsoft-Defender-ATP/Advanced-hunting-updates-USB-events-machine-level-actions-and/ba-p/824152
-MiscEvents //DeviceEvents
+//jesse.esquivel@microsoft.com
+DeviceEvents //DeviceEvents
 | where ActionType == 'DeviceBootAttestationInfo'
 | extend SG = parsejson(AdditionalFields) 
 | extend SystemGuardSecurityLevel = SG.SystemGuardSecurityLevel
 | extend ValidationResult = SG.ValidationResult
 | extend ReportValidityStartTime = SG.ReportValidityStartTime 
 | extend ReportExpirationTime = SG.ReportExpirationTime
+| extend ValidationErrorMessage = SG.ValidationErrorMessage
 | where ValidationResult != 'Success'
-| project EventTime, ComputerName, MachineId, SystemGuardSecurityLevel, ValidationResult, ReportValidityStartTime, ReportExpirationTime, ReportId
-// | project TimeStamp, DeviceName, DeviceID, SystemGuardSecurityLevel, ValidationResult, ReportValidityStartTime, ReportExpirationTime, ReportId
+| project Timestamp, DeviceName, DeviceId, SystemGuardSecurityLevel, ValidationResult, ValidationErrorMessage, ReportValidityStartTime, ReportExpirationTime, ReportId
