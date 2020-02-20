@@ -2,18 +2,18 @@
 //Use this data to assess up to dateness of MpSigStub/AM/AV definitions on machines, and for PowerBI reports, etc.
 //updated to show that MPSigStubVersion is actual version of mpsigstub.exe and not the AME version
 //jesse.esquivel@microsoft.com
-FileCreationEvents
+DeviceFileEvents
 | where InitiatingProcessCommandLine contains 'MpSigStub.exe'
 | extend AVVersion=tostring(split(InitiatingProcessCommandLine, ' ')[4])
 | extend MPSigStubVersion=tostring(split(InitiatingProcessCommandLine, ' ')[2]) 
-| summarize arg_max(AVVersion, *) by ComputerName
-| project ComputerName, MPSigStubVersion, AVVersion
-| join (FileCreationEvents
+| summarize arg_max(AVVersion, *) by DeviceName
+| project DeviceName, MPSigStubVersion, AVVersion
+| join (DeviceFileEvents
         | where FileName == 'MsMpEng.exe'
         | where FolderPath contains @'C:\ProgramData\Microsoft\Windows Defender\Platform\'
         | extend PlatformVersion=tostring(split(FolderPath, '\\', 5))
         | extend AMProductVersion=(split(PlatformVersion, '"')[1])
-        | project ComputerName, PlatformVersion, AMProductVersion)
-    on ComputerName
-| summarize arg_max(AVVersion, *) by ComputerName
-| project ComputerName, MPSigStubVersion, AMProductVersion, AVVersion
+        | project DeviceName, PlatformVersion, AMProductVersion)
+    on DeviceName
+| summarize arg_max(AVVersion, *) by DeviceName
+| project DeviceName, MPSigStubVersion, AMProductVersion, AVVersion
