@@ -1,1 +1,1 @@
-USB PBI reports.
+# PowerBI report that details identified PnP device connections.
