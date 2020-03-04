@@ -9,7 +9,7 @@ let fileEvents = DeviceFileEvents
     | where InitiatingProcessAccountName != "NETWORK SERVICE"
     | where InitiatingProcessAccountName != "SYSTEM"
     | where InitiatingProcessAccountName != "LOCAL SERVICE"
-    | project Timestamp, DeviceId, InitiatingProcessAccountName, ActionType, FolderPath, InitiatingProcessCreationTime, ReportId;
+    | project Timestamp, DeviceId, ActionType, FolderPath, ReportId;
 let loggedOnUsers = DeviceInfo
     | extend data=parsejson(LoggedOnUsers)
     | mv-expand data
@@ -26,7 +26,7 @@ DeviceEvents
 | where PnPDeviceId startswith @'USBSTOR\'
 | project Timestamp, DeviceName, DeviceId, ClassName, DeviceDescription, PnPDeviceId, VendorId, ReportId
 | join kind = inner(loggedOnUsers) on DeviceId
-| summarize arg_max(Timestamp1, *) by Timestamp
-| project-away DeviceId1, Timestamp1
 | join kind = inner(fileEvents) on DeviceId
-| sort by Timestamp desc
+| project-away DeviceId1, DeviceId2, Timestamp, Timestamp1
+| summarize arg_max(ReportId, *) by Timestamp2 
+| sort by Timestamp2 desc
