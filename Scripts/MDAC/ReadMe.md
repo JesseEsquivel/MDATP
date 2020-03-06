@@ -46,9 +46,9 @@ Whitelisting the COM object registration of the Java ActiveX control is not enou
 </FileRules>
 ```
 MDAC CI policies are also applied differently in Windows 10 1903, the policy must be renamed to the PolicyID of the policy, this is contained within the source XML of each policy; and it must be placed in the following directory:
-
+```
 C:\Windows\System32\CodeIntegrity\CiPolicies\Active
-
+```
 Once I had the COM object registration and the Java binaries whitelisted, the website in question loaded the java content and rendered the page.
 
 # Your mileage may vary.
