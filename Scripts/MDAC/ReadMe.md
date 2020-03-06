@@ -53,12 +53,12 @@ Once I had the COM object registration and the Java binaries whitelisted, the we
 
 # Your mileage may vary.
 
-Deploy multiple CI policies:
+Deploy multiple CI policies:<br />
 https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control/deploy-multiple-windows-defender-application-control-policies
 
-COM Object Registration:
+COM Object Registration:<br />
 https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control/allow-com-object-registration-in-windows-defender-application-control-policy
 
-Windows 10 1903+ File based Path Rules:
+Windows 10 1903+ File based Path Rules:<br />
 https://docs.microsoft.com/en-us/windows/whats-new/whats-new-windows-10-version-1903
 
