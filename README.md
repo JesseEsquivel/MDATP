@@ -1,5 +1,5 @@
 # MDATP
-{: .gitlab-blue}
+{: .MDATP-blue}
 
 Microsoft Defender Advanced Threat Protection.
 <div style="text-align:center">
