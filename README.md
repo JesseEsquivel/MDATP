@@ -1,6 +1,6 @@
 # MDATP
 Microsoft Defender Advanced Threat Protection.
-<p align="center">
+<p style="text-align: center">
                                                                
                                          %@@@    ...                                                
                                      ,@@@@@@@@            /@@@                                      
