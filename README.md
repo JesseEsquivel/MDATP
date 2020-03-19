@@ -1,8 +1,4 @@
 ### MDATP blue Heading
-{: .MDATP-blue}
-
-### GitLab Orange Heading
-{: .gitlab-orange}
 
 Microsoft Defender Advanced Threat Protection.
 <div style="text-align:center">
