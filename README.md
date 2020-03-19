@@ -1,6 +1,6 @@
 # MDATP
 Microsoft Defender Advanced Threat Protection.
-<p style="text-align: center">
+<div style="text-align:center">
                                                                
                                          %@@@    ...                                                
                                      ,@@@@@@@@            /@@@                                      
@@ -27,6 +27,6 @@ Microsoft Defender Advanced Threat Protection.
                                %@&  @@@@@@@@@@@@@@@@@@@@@@@@@%    #@@                               
                                    @@@@@@@@@@@@@@@@@@@@@@@@@@.@@@.                                  
                                         ,@@@@@@@@@@@@@@@@@@(                       
-</p>
+</div>
 # Various Things
 A collection of various items acquired in an MDATP journey.
