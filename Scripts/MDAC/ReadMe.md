@@ -36,11 +36,12 @@ Some customers still use the Java ActiveX control add-in in Internet Explorer.  
         <Boolean>true</Boolean>
       </Value>
     </Setting>
+</Settings>
 ```
 The GUIDs above in the policy can be obtained by re-producing the failure on a machine and checking the event viewer, specifically the Applications and Services/Microsoft/Windows/AppLocker/MSI and Script log.  Once you’ve gathered all of the GUIDs being blocked by the failure re-pro you can add them to the xml policy like above.
 
 Whitelisting the COM object registration of the Java ActiveX control is not enough to allow the Java control to function, you must also whitelist the actual Java binaries.  Creating a new code integrity (CI) policy with Java already installed (like we have been doing) does not work, you must whitelist them by file path.  Whitelisting by file path is only available in Windows 10 1903 and above.  1903 also brings new functionality of using base and supplemental CI policies.  I created a base policy as before and added the COM object registration section to it.  I then created a supplemental policy for file path based rules that contains the following:
-```
+```xml
 <FileRules>
     <Allow ID="ID_ALLOW_A_1" FriendlyName="C:\Program Files (x86)\Java\* FileRule" MinimumFileVersion="0.0.0.0" FilePath="C:\Program Files (x86)\Java\*" />
 </FileRules>
