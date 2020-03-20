@@ -5,5 +5,5 @@ A few PowerShell scripts that I modified to test APIs for SIEM integration with 
 How to pull alerts using the MDATP SIEM REST API:<br>
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/pull-alerts-using-rest-api
 
-Ensure you follow the instructions on how to assign the proper permissions to the app registration for the MDATP Security center API:
+Ensure you follow the instructions on how to assign the proper permissions to the app registration for the MDATP Security center API:<br>
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/api-hello-world
