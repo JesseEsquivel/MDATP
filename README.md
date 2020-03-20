@@ -30,4 +30,5 @@ Microsoft Defender Advanced Threat Protection.
                                         ,@@@@@@@@@@@@@@@@@@(                       
 </div>
 # Various Things
+
 A collection of various items acquired in an MDATP journey.
