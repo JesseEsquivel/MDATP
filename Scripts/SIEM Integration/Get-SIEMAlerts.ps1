@@ -34,7 +34,7 @@ $token = Get-Content "$scriptDir\LatestSIEM-token.txt"
 $dateTime = (Get-Date).ToUniversalTime().AddHours(-200).ToString("o")
 
 #test SIEM API
-$url = 'https://wdatp-alertexporter-eu.windows.com/api/alerts?limit=20&sinceTimeUtc=2016-09-12T00:00:00.000'
+$url = 'https://wdatp-alertexporter-us.windows.com/api/alerts?limit=20&sinceTimeUtc=2016-09-12T00:00:00.000'
 
 #Set the WebRequest headers
 $headers = @{ 
