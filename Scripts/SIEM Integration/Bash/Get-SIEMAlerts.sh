@@ -29,11 +29,11 @@ scriptDir=$(pwd)
 token=$(<$scriptDir/LatestSIEM-token.txt)
 
 #test the SIEM API, get alerts since 1/1/2020
-url='https://wdatp-alertexporter-eu.windows.com/api/alerts?limit=20&sinceTimeUtc=2020-01-01T00:00:00.000'
+url='https://wdatp-alertexporter-us.windows.com/api/alerts?limit=20&sinceTimeUtc=2020-01-01T00:00:00.000'
 
 #send web requst to API and echo JSON content
 apiResponse=$(curl -s X GET "$url" -H "Content-Type: application/json" -H "Accept: application/json"\
          -H "Authorization: Bearer $token" | cut -d "[" -f2 | cut -d "]" -f1)
-echo "Success! Congratulations you accessed the SIEM API!"
+echo "If you see Alert info in JSON format, congratulations you accessed the MDATP SIEM API!"
 echo
 echo $apiResponse
