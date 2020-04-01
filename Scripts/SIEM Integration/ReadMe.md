@@ -8,4 +8,4 @@ https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-de
 Ensure you follow the instructions on how to assign the proper permissions to the app registration for the MDATP Security center API:<br>
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/api-hello-world
 
-I found that just enabling the SIEM connector in the MDATP portal did not assign the correct permissions to the app registration, so be sure to double check that.  Once the permissions were assigned we were able to query the API successfully.  
+I found that just enabling the SIEM connector in the MDATP portal did not assign the correct permissions to the app registration, so be sure to double check that.  Once the permissions were assigned we were able to query the APIs successfully.  
