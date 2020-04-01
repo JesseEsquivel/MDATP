@@ -25,12 +25,13 @@ appId='' ### Paste your Application ID here
 appSecret='' ### Paste your Application secret here
 resourceAppIdUri='https://graph.windows.net'
 oAuthUri="https://login.windows.net/$tenantId/oauth2/token"
+scriptDir=$(pwd)
 ##################################################################################################################
 
 apiResponse=$(curl -s X POST "$oAuthUri" -d "resource=$resourceAppIdUri&client_id=$appId&client_secret=$appSecret&\
-    grant_type=client_credentials" | cut -d "{" -f2 | cut -d "}" -f1)
+        grant_type=client_credentials" | cut -d "{" -f2 | cut -d "}" -f1)
 IFS=","
 apiResponseArr=($apiResponse)
 IFS=":"
 tokenArr=(${apiResponseArr[6]})
-echo ${tokenArr[1]} | cut -d "\"" -f2 | cut -d "\"" -f1
+echo ${tokenArr[1]} | cut -d "\"" -f2 | cut -d "\"" -f1 >> $scriptDir/LatestSIEM-token.txt
