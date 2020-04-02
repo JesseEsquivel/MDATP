@@ -32,7 +32,7 @@ $appId = '' ### Paste your Application ID here
 $appSecret = '' ### Paste your Application secret here
 
 $resourceAppIdUri = 'https://api.securitycenter.windows.com'
-$oAuthUri = "https://login.windows.net/$TenantId/oauth2/token"
+$oAuthUri = "https://login.windows.net/$tenantId/oauth2/token"
 $authBody = [Ordered] @{
     resource = "$resourceAppIdUri"
     client_id = "$appId"
