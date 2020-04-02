@@ -10,6 +10,8 @@ These files test the MDATP SIEM API in PowerShell/Bash:<br>
 Get-SIEMToken.ps1/Get-SIEMToken.sh<br>
 Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh<br>
 
+Run Get-Token first, then Get-Alerts.
+
 # MDATP SIEM Integration
 
 A few PowerShell scripts that I modified/wrote to test APIs for SIEM integration with IBM QRadar.  Ensure that you can successfully query the APIs before moving to configuring your SIEM.  This will ensure you have the proper connectivity to access the APIs and the proper Azure AD app registration setup before moving on to configuring your SIEM.
