@@ -33,4 +33,4 @@ These files test the MDATP SIEM API in PowerShell/Bash:<br>
 Get-SIEMToken.ps1/Get-SIEMToken.sh<br>
 Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh<br>
 
-Run Get-Token first, then Get-Alerts.
+Run Get-Token first to get your access token, then run Get-Alerts to use the token to query the API.  The PowerShell snips will output the response content in csv and json formats, and the bash scripts will echo the response content to the screen.
