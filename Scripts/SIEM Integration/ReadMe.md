@@ -23,10 +23,12 @@ Check the Bash folder for testing directly from Linux hosts!  This may help to e
 
 There are two APIs that you can query for alerts, the Microsoft Defender API and the MDATP SIEM API.
 
+### Microsoft Defender API
 These files test the Defender API in PowerShell/Bash:<br>
 Get-Token.ps1/Get-Token.sh<br>
 Get-Alerts.ps1/Get-Alerts.sh<br>
 
+### Microsoft Defender SIEM API
 These files test the MDATP SIEM API in PowerShell/Bash:<br>
 Get-SIEMToken.ps1/Get-SIEMToken.sh<br>
 Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh<br>
