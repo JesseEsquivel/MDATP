@@ -8,13 +8,13 @@ https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-de
 Ensure you follow the instructions on how to assign the proper permissions to the app registration for the MDATP Security center API:<br>
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/api-hello-world
 
-### Azure AD SIEM App Permissions!
+### Azure AD SIEM App Permissions
 
 After you enable SIEM integration in the portal you have to go into AzureAD and add permissions to the registered application to read alerts, this is not done by simply enabling SIEM access.  Go here to assign the " read alert" permission to the registered app:<br>
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/exposed-apis-create-app-webapp
 
 Once the permissions were assigned I was able to query the APIs successfully.  
 
-### Test SIEM API from Linux!
+### Test SIEM API from Linux
 
 Check the Bash folder for testing directly from Linux hosts!  This may help to eliminate any possible network issues and/or prove that the API can be accessed directly from Linux hosts.
