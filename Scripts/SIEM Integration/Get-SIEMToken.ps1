@@ -44,4 +44,4 @@ $authBody = [Ordered] @{
 #call API
 $authResponse = Invoke-RestMethod -Method Post -Uri $oAuthUri -Body $authBody -ErrorAction Stop
 $authResponse
-Out-File -FilePath "$scriptDir\LatestSIEM-token.txt" -InputObject $token
+Out-File -FilePath "$scriptDir\LatestSIEM-token.txt" -InputObject $authResponse.access_token
