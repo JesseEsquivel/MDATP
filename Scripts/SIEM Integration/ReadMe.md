@@ -15,6 +15,6 @@ https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-de
 
 Once the permissions were assigned I was able to query the APIs successfully.  
 
-### Linux!
+### Test SIEM API from Linux!
 
 Check the Bash folder for testing directly from Linux hosts!  This may help to eliminate any possible network issues and/or prove that the API can be accessed directly from Linux hosts.
