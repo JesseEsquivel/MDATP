@@ -27,9 +27,9 @@
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 
 #Paste below your Tenant ID, App ID and App Secret (App key).
-$tenantId = 'b6e3e503-0d14-4e0e-9ad7-84a2a88d37e2' ### Paste your tenant ID here
-$appId = '7f9c7ed6-5fbe-4b80-955e-3248ddaaeabb' ### Paste your Application ID here
-$appSecret = 'psPvMkisOOm0[4e8.5q:Xlp[sbHGCEAz' ### Paste your Application secret here
+$tenantId = '' ### Paste your tenant ID here
+$appId = '' ### Paste your Application ID here
+$appSecret = '' ### Paste your Application secret here
 
 $resourceAppIdUri = 'https://api.securitycenter.windows.com'
 $oAuthUri = "https://login.windows.net/$TenantId/oauth2/token"
