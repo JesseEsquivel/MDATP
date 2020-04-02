@@ -1,3 +1,15 @@
+# Alert APIs
+
+There are two APIs that you can query for alerts, the Microsoft Defender API and the MDATP SIEM API.
+
+These files test the Defender API in PowerShell/Bash:<br>
+Get-Token.ps1/Get-Token.sh
+Get-Alerts.ps1/Get-Alerts.sh
+
+These files test the MDATP SIEM API in PowerShell/Bash:,br>
+Get-SIEMToken.ps1/Get-SIEMToken.sh
+Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh
+
 # MDATP SIEM Integration
 
 A few PowerShell scripts that I modified/wrote to test APIs for SIEM integration with IBM QRadar.  Ensure that you can successfully query the APIs before moving to configuring your SIEM.  This will ensure you have the proper connectivity to access the APIs and the proper Azure AD app registration setup before moving on to configuring your SIEM.
