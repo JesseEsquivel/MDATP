@@ -3,12 +3,12 @@
 There are two APIs that you can query for alerts, the Microsoft Defender API and the MDATP SIEM API.
 
 These files test the Defender API in PowerShell/Bash:<br>
-Get-Token.ps1/Get-Token.sh
-Get-Alerts.ps1/Get-Alerts.sh
+Get-Token.ps1/Get-Token.sh<br>
+Get-Alerts.ps1/Get-Alerts.sh<br>
 
-These files test the MDATP SIEM API in PowerShell/Bash:,br>
-Get-SIEMToken.ps1/Get-SIEMToken.sh
-Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh
+These files test the MDATP SIEM API in PowerShell/Bash:<br>
+Get-SIEMToken.ps1/Get-SIEMToken.sh<br>
+Get-SIEMAlerts.ps1/Get-SIEMAlerts.sh<br>
 
 # MDATP SIEM Integration
 
