@@ -1,0 +1,17 @@
+//Query for local admin logins in the last 24 hours
+//jesse.esquivel@microsoft.com
+//filter to machines with deviceRegistry tag or to a machine group
+let targetDevices = DeviceInfo
+        | where Timestamp > ago(24h)
+        | where RegistryDeviceTag == "Empire"
+        | project Timestamp, DeviceId, DeviceName, RegistryDeviceTag, ReportId;
+//show any logons with local admin in last 24 hours
+DeviceLogonEvents
+| where Timestamp > ago(24h)
+| where ActionType == "LogonSuccess"
+| where IsLocalAdmin == "True"
+| project Timestamp, DeviceId, DeviceName, AccountDomain, AccountName, IsLocalAdmin, ActionType, LogonType, ReportId
+| join kind = inner(targetDevices) on DeviceId
+| project-away Timestamp1, DeviceId1, DeviceName1, ReportId1
+| summarize arg_max(ReportId, *) by Timestamp
+| sort by Timestamp desc
