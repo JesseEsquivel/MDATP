@@ -3,7 +3,7 @@
 //filter to machines with deviceRegistry tag or to a machine group
 let targetDevices = DeviceInfo
         | where Timestamp > ago(24h)
-        | where RegistryDeviceTag == "Empire"
+        | where RegistryDeviceTag == "DEVICEREGISTRYTAG"
         | project Timestamp, DeviceId, DeviceName, RegistryDeviceTag, ReportId;
 DeviceRegistryEvents
 | where Timestamp > ago(24h)
