@@ -1,1 +1,1 @@
-# PowerBI report that details identified threats in MDATP.
+# PowerBI reports for threat detection, ASR, etc.
