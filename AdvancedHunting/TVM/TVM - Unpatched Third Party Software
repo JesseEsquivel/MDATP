@@ -1,0 +1,28 @@
+//Unpatched Third Party Software - Find all unpatched 3rd party software: query DeviceTvmSoftwareVulnerabilitiesKB,
+//and DeviceTvmSoftwareInventoryVulnerabilities TVM tables for all software with CVEs, then finds occurrences of any 
+//software that does not have a CVE associated with it to use for latest non vulnerable version and joins all tables
+//so output shows the vulnerability and if there are non vulnerable versions present in the tenant on any machine,
+//if so displays latest non vulnerable version
+//jesse.esquivel@microsoft.com
+let CVEs = DeviceTvmSoftwareVulnerabilitiesKB
+    | project CveId, IsExploitAvailable, PublishedDate, VulnerabilityDescription;
+let latestVersion = DeviceTvmSoftwareInventoryVulnerabilities
+    | where SoftwareVendor != "microsoft"
+    | where isempty(CveId)
+    | extend SoftVer = replace('\\.+',"",tostring(SoftwareVersion))
+    | extend LatestSoftwareIntVersionFound = toint(SoftVer)
+    | extend Event = pack("SoftwareVendor",SoftwareVendor,"SoftwareName",SoftwareName, "SoftwareVersion", SoftwareVersion,
+        "LatestSoftwareVersionFound",SoftwareVersion)
+    | summarize Events = makelist(Event), max(LatestSoftwareIntVersionFound) by SoftwareName
+    | mv-expand Events
+    | project SoftwareVendor = Events.SoftwareVendor, SoftwareName = tostring(Events.SoftwareName), SoftwareVersion = Events.SoftwareVersion, LatestSoftVersionInstalledInTenant = max_LatestSoftwareIntVersionFound;
+DeviceTvmSoftwareInventoryVulnerabilities
+| where SoftwareVendor != "microsoft"
+| project DeviceId, DeviceName, SoftwareVendor, SoftwareName, SoftwareVersion, CveId, VulnerabilitySeverityLevel
+| join kind = inner(CVEs) on CveId
+| project-away CveId1
+| summarize arg_max(DeviceId, *) by CveId
+| join kind = inner(latestVersion) on SoftwareName
+| summarize arg_max(DeviceId, *) by CveId 
+| project-away SoftwareName1, SoftwareVersion1
+| project CveId, VulnerabilitySeverityLevel, IsExploitAvailable, SoftwareVendor, SoftwareName, SoftwareVersion, LatestSoftVersionInstalledInTenant, PublishedDate, VulnerabilityDescription
