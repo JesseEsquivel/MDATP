@@ -7,17 +7,17 @@
 let CVEs = DeviceTvmSoftwareVulnerabilitiesKB
     | project CveId, IsExploitAvailable, PublishedDate, VulnerabilityDescription;
 let latestVersion = DeviceTvmSoftwareInventoryVulnerabilities
-    | where SoftwareVendor != "microsoft"
+    | where SoftwareVendor != 'microsoft'
     | where isempty(CveId)
-    | extend SoftVer = replace('\\.+',"",tostring(SoftwareVersion))
+    | extend SoftVer = replace('\\.+','',tostring(SoftwareVersion))
     | extend LatestSoftwareIntVersionFound = toint(SoftVer)
-    | extend Event = pack("SoftwareVendor",SoftwareVendor,"SoftwareName",SoftwareName, "SoftwareVersion", SoftwareVersion,
-        "LatestSoftwareVersionFound",SoftwareVersion)
+    | extend Event = pack('SoftwareVendor',SoftwareVendor,'SoftwareName',SoftwareName, 'SoftwareVersion', SoftwareVersion,
+        'LatestSoftwareVersionFound',SoftwareVersion)
     | summarize Events = makelist(Event), max(LatestSoftwareIntVersionFound) by SoftwareName
     | mv-expand Events
     | project SoftwareVendor = Events.SoftwareVendor, SoftwareName = tostring(Events.SoftwareName), SoftwareVersion = Events.SoftwareVersion, LatestSoftVersionInstalledInTenant = max_LatestSoftwareIntVersionFound;
 DeviceTvmSoftwareInventoryVulnerabilities
-| where SoftwareVendor != "microsoft"
+| where SoftwareVendor != 'microsoft'
 | project DeviceId, DeviceName, SoftwareVendor, SoftwareName, SoftwareVersion, CveId, VulnerabilitySeverityLevel
 | join kind = inner(CVEs) on CveId
 | project-away CveId1
