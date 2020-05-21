@@ -9,7 +9,7 @@ let fileEvents = DeviceFileEvents
     | where InitiatingProcessAccountName != "NETWORK SERVICE"
     | where InitiatingProcessAccountName != "SYSTEM"
     | where InitiatingProcessAccountName != "LOCAL SERVICE"
-    | project Timestamp, DeviceId, ActionType, FolderPath, ReportId;
+    | project Timestamp, DeviceId, ActionType, ShareName, FolderPath, FileSize, ReportId;
 let loggedOnUsers = DeviceInfo
     | extend data=parsejson(LoggedOnUsers)
     | mv-expand data
