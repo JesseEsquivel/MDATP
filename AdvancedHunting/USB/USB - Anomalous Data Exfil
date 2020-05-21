@@ -13,13 +13,13 @@ let fileEvents = DeviceFileEvents
     | where InitiatingProcessAccountName != "SYSTEM"
     | where InitiatingProcessAccountName != "LOCAL SERVICE"
     | extend DriveLetter = tostring(split(FolderPath, '\\')[0])
-    | extend Event = pack("Timestamp", Timestamp, "ReportId", ReportId,"ActionType",ActionType,"FolderPath",FolderPath,"DeviceName",
-        DeviceName,"FolderPath",FolderPath)
+    | extend Event = pack("Timestamp", Timestamp, "ReportId", ReportId,"ActionType",ActionType,"ShareName",ShareName,
+        "FolderPath",FolderPath,"FileSize",FileSize,"DeviceName",DeviceName)
     | summarize Events = makelist(Event), FileCount = dcount(SHA1) by DeviceId, DriveLetter, bin(Timestamp, TimeBucket)
     | where FileCount > FileCountPerTimeBucket
     | mv-expand Events
     | project Timestamp = todatetime(Events.Timestamp), DeviceId, DeviceName = Events.DeviceName, DriveLetter, FileCount, 
-        FolderPath = Events.FolderPath, ReportId = tolong(Events.ReportId);
+        FolderPath = Events.FolderPath, FileSize = Events.FileSize, ReportId = tolong(Events.ReportId);
 let loggedOnUsers = DeviceInfo
     | extend data=parsejson(LoggedOnUsers)
     | mv-expand data
