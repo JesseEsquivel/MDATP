@@ -6,7 +6,7 @@
 # MDATP-Sec-Intel-Packages.ps1
 # v1.0 08/05/2019 Initial creation - Download MDATP Security Intelligence Packages
 # v1.1 10/16/2019 Bug fix for extraction method, and test for x64 dir 
-#
+# v1.2 06/08/2020 Revised folder/file copy operations
 # 
 # 
 # Microsoft Disclaimer for custom scripts
@@ -37,7 +37,6 @@ $vdmpathbase = 'C:\Windows\wdav-update\{00000000-0000-0000-0000-'
 $vdmpathtime = Get-Date -Format "yMMddHHmmss"
 $vdmpath = $vdmpathbase + $vdmpathtime + '}'
 $vdmpackage = $vdmpath + '\mpam-fe.exe'
-$args = @("/X")
 
 ##################################################################################################################
 # Functions
@@ -152,7 +151,7 @@ Write-Host
 try
 {
     Write-Host "Extracting Security Intelligence Package..."
-    Start-Process C:\windows\system32\cmd.exe -ArgumentList "/c cd $vdmpath & mpam-fe.exe /x" -Wait -WindowStyle Hidden
+    Start-Process C:\windows\system32\cmd.exe -ArgumentList "/c cd $vdmpath & mpam-fe.exe /X" -Wait -WindowStyle Hidden
 }
 catch
 {
@@ -169,12 +168,13 @@ try
 {
     Write-Host "Copying extracted files to share..."
     Copy-Item -Path $vdmpath -Destination "\\fileserver.fqdn\mdatp$\wdav-update" -Force -Recurse | Out-Null
+    Remove-Item -Path "\\fileserver.fqdn\mdatp$\wdav-update\{00000000-0000-0000-0000-$vdmpathtime}\mpam-fe.exe" -Force | Out-Null
     Get-ChildItem "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Recurse | ForEach-Object {Remove-Item $_.FullName -Recurse -Force}
     If(!(Test-Path -Path "\\fileserver.fqdn\mdatp$\wdav-update\x64"))
     {
         New-Item -ItemType Directory -Force -path "\\fileserver.fqdn\mdatp$\wdav-update\x64" | Out-Null
     }
-    Copy-Item -Path "$vdmpath\*" -Destination "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Force -Recurse | Out-Null
+    Copy-Item -Path "$vdmpath\mpam-fe.exe" -Destination "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Force -Recurse | Out-Null
 }
 catch
 {
