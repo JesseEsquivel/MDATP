@@ -1,0 +1,11 @@
+//query for MDAV signature versions
+//Use this data to assess up to dateness of AV definitions on machines, and for PowerBI reports, etc.
+//jesse.esquivel@microsoft.com
+DeviceTvmSecureConfigurationAssessment
+| where ConfigurationSubcategory == "Antivirus"
+| extend avdata=parsejson(Context)
+| extend sigVersion = split(avdata, '"')
+| extend AVSigVersion = tostring(sigVersion[1])
+| project DeviceId, DeviceName, OSPlatform, AVSigVersion, IsCompliant, IsApplicable
+| summarize arg_max(AVSigVersion, *) by DeviceName
+| summarize Machines=dcount(DeviceName) by AVSigVersion
