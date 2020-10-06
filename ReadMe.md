@@ -1,7 +1,6 @@
 ### MDATP
 
-Microsoft Defender Advanced Threat Protection.
-
+Microsoft Defender for Endpoint.
                                                                
                                          %@@@    ...                                                
                                      ,@@@@@@@@            /@@@                                      
