@@ -1,5 +1,5 @@
 # Migrate McAfee <> Defender
-Migrate your settings from McAfee to Microsoft Defender.
+Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
 # Migrate Firewall Rules
 The following two scripts can be used to convert McAfee firewall rules to MDF.
@@ -87,7 +87,7 @@ A few things to be aware of here. This first is line 109, this line contains a r
 ```PowerShell
 RemoteAddress = $($Rule.'Remote Address') -replace ('(\s+-\s+|\s+,\s+,\s+|\s+,\s+|,\s+|\s-\s|and|\s+and\s+|and\s+|-\s+|\s+-|-|\sand)', ",") -split "," #<--remove human induced whitespace and nonvalid characters
 ```
-Note that you may (depending on what is in your source xml file) encounter different whitespace character combinations used as value delimiters for the RemoteAddress column.  We cannot account for all of them, so you can modify the RegEx in line 109 to find and replace additional patterns!
+Note that you may (depending on what is in your source xml file) encounter different whitespace character combinations used as value delimiters for the RemoteAddress column.  We cannot account for all of them, so you can modify the RegEx in line 109 to find and replace additional patterns! :thumbsup:
 
 Second thing to be aware of are lines 112-115. On the MDF side you can only specify a port (using the -RemotePort switch) if the -Protocol switch is TCP or UDP.  So if you for instance specify a RemotePort of 200 and a protocol of 2 (IGMP), the cmdlet will fail.  These lines handle the situation:
 
@@ -97,7 +97,7 @@ Second thing to be aware of are lines 112-115. On the MDF side you can only spec
         	    ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
     		};
 ```
-Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review.
+Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. :grinning:
 
 
 
