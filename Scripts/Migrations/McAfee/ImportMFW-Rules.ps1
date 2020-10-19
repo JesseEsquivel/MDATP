@@ -100,19 +100,19 @@ ForEach ($Rule In $FirewallRules)
 		Enabled = $Rule.Enabled
 		Profile = $Rule.Profile
 		#Platform = ListToStringArray $Rule.Platform @()
-    Direction = $Rule.Direction
+                Direction = $Rule.Direction
 		Action = $Rule.Action
 		#EdgeTraversalPolicy = $Rule.EdgeTraversalPolicy
 		#LooseSourceMapping = ValueToBoolean $Rule.LooseSourceMapping
 		#LocalOnlyMapping = ValueToBoolean $Rule.LocalOnlyMapping
 		#LocalAddress = ListToStringArray $Rule.LocalAddres
-    RemoteAddress = $($Rule.'Remote Address') -replace ('(\s+-\s+|\s+,\s+,\s+|\s+,\s+|,\s+|\s-\s|and|\s+and\s+|and\s+|-\s+|\s+-|-|\sand)', ",") -split "," #<--remove human induced whitespace and nonvalid characters
+                RemoteAddress = $($Rule.'Remote Address') -replace ('(\s+-\s+|\s+,\s+,\s+|\s+,\s+|,\s+|\s-\s|and|\s+and\s+|and\s+|-\s+|\s+-|-|\sand)', ",") -split "," #<--remove human induced whitespace and nonvalid characters
 		Protocol = $($Rule.Protocol)
 		LocalPort = ListToStringArray $Rule.'Local Port'.replace(" ","")
-    RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
-    {
-        ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
-    };
+    		RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
+    		{
+        	    ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
+    		};
 		#IcmpType = ListToStringArray $Rule.IcmpType
 		#DynamicTarget = if ([STRING]::IsNullOrEmpty($Rule.DynamicTarget)) { "Any" } else { $Rule.DynamicTarget }
 		Program = $Rule.Program
