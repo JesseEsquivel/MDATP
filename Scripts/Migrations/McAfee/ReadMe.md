@@ -4,7 +4,7 @@ Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 # Migrate Firewall Rules
 The following two scripts can be used to convert McAfee firewall rules to MDF.
 
-## Convert-FWRules.ps1 ##
+## Convert-FWRules.ps1
 The first script Convert-FWRules.ps1 will read in and parse a McAfee firewall exported xml and will then export firewall rules to csv format.  This csv output will contain all of the columns necessary that map to parameters of the PowerShell [New-NetFirewallRule](https://docs.microsoft.com/en-us/powershell/module/netsecurity/new-netfirewallrule?view=win10-ps) cmdlet.  This is important to understand as each switch of the cmdlet ony accepts specific input(please see the linked doc for specifics of each switch).  Exporting to csv also permits the review of the exported firewall rules before importing them into MDF. The CSV output will need to be sanitized for a few reasons.
 
 ### The "Remote Address" Column
