@@ -1,4 +1,4 @@
-# Migrate McAfee <> Defender
+# Migrate McAfee ==> Defender
 Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
 # Migrate Firewall Rules
