@@ -1,5 +1,5 @@
-# MDATP
-Microsoft Defender Advanced Threat Protection
+# MDE
+Microsoft Defender for Endpoint
 
 # Tricky items
 A collection of scripts and items used for non-persistent VDI onboarding, security intelligence updates, etc.
@@ -12,4 +12,3 @@ Be mindful of the file path when setting up your file share that will house the 
 
 # VDI Machines Not Reporting Telemetry?
 Ensure that you are not disabling the DiagTrack service as part of your VDI optimizations.  We were disabling this as part of the Windows 10 1803+ VDI optimization script.  This breaks telemetry, make sure DiagTrack is set to Automatic (Delayed Start) and is running.
-
