@@ -15,7 +15,7 @@ Remote Address                   | Program                                    | 
 192.168.10.x                     | **\Program Files\Adobe\acrobat.exe         | EITHER
 192.168.10.x and .x              | C:\Program Files*\Adobe\acrobat.exe        | EITHER
 192.168.10.5 and .6              | C:\Program Files\Adobe\*.exe               | BOTH
-SERVERGROUP                      |                                            | BOTH
+SERVERGROUP                      | **:\Program Files\Adobe\acrobat.exe        | BOTH
 DMZIPS                           | C:\Program Files\Java\*\java.exe           | EITHER
 
 You'll need to map what these group names or IP addresses are and replace them in the CSV with acceptable values, for example:
@@ -25,7 +25,7 @@ Remote Address                   | Program                                    | 
 192.168.10.0/24                  | **\Program Files\Adobe\acrobat.exe         | EITHER
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files*\Adobe\acrobat.exe        | EITHER
 192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\*.exe               | BOTH
-192.168.100.0/24                 |                                            | BOTH
+192.168.100.0/24                 | **:\Program Files\Adobe\acrobat.exe        | BOTH
 10.10.10.0/24                    | C:\Program Files\Java\*\java.exe           | EITHER
 
 Note that these above are just examples and not direct maps :)  The important thing is that the fields are in a format that the -RemoteAddress switch accepts.  Be kind and delimit acceptable values with a comma as shown above.  If there are values present that are in an acceptable format but are delimited by something other than a comma, this should be handled by the other script, it will remove those and replace them with a comma.
@@ -38,7 +38,7 @@ Remote Address                   | Program                                    | 
 192.168.10.0/24                  | **\Program Files\Adobe\acrobat.exe         | EITHER
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files*\Adobe\acrobat.exe        | EITHER
 192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\*.exe               | BOTH
-192.168.100.0/24                 |                                            | BOTH
+192.168.100.0/24                 | **:\Program Files\Adobe\acrobat.exe        | BOTH
 10.10.10.0/24                    | C:\Program Files\Java\*\java.exe           | EITHER
 
 The New-NetFirewallRule cmdlet -program switch only accepts a FULL path to a file name.  So you must do some investigation to find what those full paths would be.  Also you may need to create multiple rules if multiple programs are required (for example acrobat.exe and acrobatupdater.exe will require two different rules).  You'll need to map what these application names are  to a full path and file name and replace them in the CSV with acceptable values, for example:
@@ -48,7 +48,8 @@ Remote Address                   | Program                                    | 
 192.168.10.0/24                  | C:\Program Files\Adobe\acrobat.exe         | EITHER
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files(x86)\Adobe\acrobat.exe    | EITHER
 192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobat.exe         | BOTH
-192.168.100.0/24                 | C:\Program Files\Adobe\acrobatupdater.exe  | BOTH
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobatupdater.exe  | BOTH
+192.168.100.0/24                 | C:\Program Files\Adobe\acrobat.exe         | BOTH
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | EITHER
 
 ### The Direction Column
@@ -58,8 +59,9 @@ Remote Address                   | Program                                    | 
 | :--- | :--- | :---
 192.168.10.0/24                  | C:\Program Files\Adobe\acrobat.exe         | EITHER
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files(x86)\Adobe\acrobat.exe    | EITHER
-192.168.10.5 and 6               | C:\Program Files\Adobe\acrobat.exe         | BOTH
-192.168.100.0/24                 | C:\Program Files\Adobe\acrobatupdater.exe  | BOTH
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobat.exe         | BOTH
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobatupdater.exe  | BOTH
+192.168.100.0/24                 | C:\Program Files\Adobe\acrobat.exe         | BOTH
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | EITHER
 
 The New-NetFirewallRule cmdlet -Desitnation switch only accepts either "Inbound" or "Outbound" as a value, not both.  You will want to sort the CSV by this column, then identify all rules that are set to EITHER or BOTH.  You will need to duplicate all of those entries and rename the direction to Inbound for the original rows, and Outbound for the duplicated rows.  For example you will end up with an output like this:
@@ -68,13 +70,15 @@ Remote Address                   | Program                                    | 
 | :--- | :--- | :---
 192.168.10.0/24                  | C:\Program Files\Adobe\acrobat.exe         | INBOUND
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files(x86)\Adobe\acrobat.exe    | INBOUND
-192.168.10.5 and 6               | C:\Program Files\Adobe\acrobat.exe         | INBOUND
-192.168.100.0/24                 | C:\Program Files\Adobe\acrobatupdater.exe  | INBOUND
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobat.exe         | INBOUND
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobatupdater.exe  | INBOUND
+192.168.100.0/24                 | C:\Program Files\Adobe\acrobat.exe         | INBOUND
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | INBOUND
 192.168.10.0/24                  | C:\Program Files\Adobe\acrobat.exe         | OUTBOUND
 192.168.10.0/24,192.168.10.1/24  | C:\Program Files(x86)\Adobe\acrobat.exe    | OUTBOUND
-192.168.10.5 and 6               | C:\Program Files\Adobe\acrobat.exe         | OUTBOUND
-192.168.100.0/24                 | C:\Program Files\Adobe\acrobatupdater.exe  | OUTBOUND
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobat.exe         | OUTBOUND
+192.168.10.5,192.168.10.6        | C:\Program Files\Adobe\acrobatupdater.exe  | OUTBOUND
+192.168.100.0/24                 | C:\Program Files\Adobe\acrobat.exe         | OUTBOUND
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | OUTBOUND
 
 Once you have all three of these columns sanitized for your environment you can move on to importing the firewall rules into MDF.
