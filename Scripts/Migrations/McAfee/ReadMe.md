@@ -86,7 +86,7 @@ Once you have all three of these columns sanitized for your environment you can 
 ## Import-MFWRules.ps1
 The second script will take the sanitized csv output (by file name), and use it to import the firewall rules into MDF on a Windows 10/Server 2016 or above machine in bulk. The csv contains all of the columns necessary that map to parameters of the PowerShell [New-NetFirewallRule](https://docs.microsoft.com/en-us/powershell/module/netsecurity/new-netfirewallrule?view=win10-ps) cmdlet, and the three columns above have been sanitized according to the environment.  This is reccomended to be done on a virtual machine for testing, this way you can import all of the firewall rules and view them in the Windows Firewall with Advanced Security snap-in.
 
-### Human induced whitespace and nonvalid characters
+### Human induced whitespace and non-valid characters
 A few things to be aware of here. This first is line 109, this line contains a regular expression that looks for common whitespace character combinations that were used to delimit values in the McAfee xml, since these are not supported by MDF they must be removed and replaced with a comma.  The comma is required to split the value into an array, as the -RemoteAddress switch requires multiple values be passed as an array.
 
 ```PowerShell
