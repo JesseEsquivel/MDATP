@@ -92,10 +92,10 @@ Note that you may (depending on what is in your source xml file) encounter diffe
 Second thing to be aware of are lines 112-115. On the MDF side you can only specify a port (using the -RemotePort switch) if the -Protocol switch is TCP or UDP.  So if you for instance specify a RemotePort of 200 and a protocol of 2 (IGMP), the cmdlet will fail.  These lines handle the situation:
 
 ```PowerShell
-    		RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
-    		{
-        	    ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
-    		};
+RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
+{
+    ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
+};
 ```
 Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. :grinning:
 
