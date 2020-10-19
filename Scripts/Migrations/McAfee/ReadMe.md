@@ -101,7 +101,7 @@ RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
     ListToStringArray $rule.'Remote Port'.replace(" ","") # <--- There must be no space in this string or cmdlet will fail :(
 };
 ```
-Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. :grinning:
+Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. Please note that these are sample scripts, your mileage may vary! :grinning:
 
 
 
