@@ -30,7 +30,7 @@ Remote Address                   | Program                                    | 
 
 Note that these above are just examples and not direct maps :)  The important thing is that the fields are in a format that the -RemoteAddress switch accepts.  Be kind and delimit acceptable values with a comma as shown above.  If there are values present that are in an acceptable format but are delimited by something other than a comma, this should be handled by the other script, it will remove those and replace them with a comma.
 
-### The Program Column
+### The "Program" Column
 This column will need to be sanitized.  The reason is that it may have some values that the -Program switch does not accept.  Some of these unacceptable values are listed below and will need to be replaced with values that the -Program switch will accept. Same story as the Remote Address column.
 
 Remote Address                   | Program                                    | Direction
@@ -52,7 +52,7 @@ Remote Address                   | Program                                    | 
 192.168.100.0/24                 | C:\Program Files\Adobe\acrobat.exe         | BOTH
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | EITHER
 
-### The Direction Column
+### The "Direction" Column
 lastly the direction column which will also need to be sanitized.  The reason is that it may have some values that the -Direction switch does not accept.  Some of these unacceptable values are listed below and will need to be replaced with values that the -Program switch will accept. Same story as the Remote Address column.
 
 Remote Address                   | Program                                    | Direction
