@@ -89,7 +89,7 @@ RemoteAddress = $($Rule.'Remote Address') -replace ('(\s+-\s+|\s+,\s+,\s+|\s+,\s
 ```
 Note that you may (depending on what is in your source xml file) encounter different whitespace character combinations used as value delimiters for the RemoteAddress column.  We cannot account for all of them, so you can modify the RegEx in line 109 to find and replace additional patterns! :thumbsup:
 
-Second thing to be aware of are lines 112-115. On the MDF side you can only specify a port (using the -RemotePort switch) if the -Protocol switch is TCP or UDP.  So if you for instance specify a RemotePort of 200 and a protocol of 2 (IGMP), the cmdlet will fail.  These lines handle the situation:
+Second thing to be aware of are lines 112-115. On the MDF side you can only specify a port (using the -RemotePort switch) if the -Protocol switch is TCP or UDP.  So if you for instance specify a RemotePort of 200 and a protocol of 2 (IGMP), the cmdlet will fail.  These lines handle the situation by omitting the ReportPort column if the protocol is NOT TCP or UDP:
 
 ```PowerShell
 RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
