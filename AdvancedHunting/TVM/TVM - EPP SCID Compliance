@@ -1,0 +1,47 @@
+//Additional EPP SCID compliance
+//Use existing AH data in TVM tables to assess compliance, used in PBI template
+//jesse.esquivel@microsoft.com
+DeviceTvmSecureConfigurationAssessment
+| where ConfigurationId in ('scid-91', 'scid-2000', 'scid-2001', 'scid-2002', 'scid-2003', 'scid-2010',
+    'scid-2011', 'scid-2012', 'scid-2013', 'scid-2014', 'scid-2016', 'scid-2071', 'scid-2072', 'scid-2073',
+    'scid-2051', 'scid-2021', 'scid-2004', 'scid-2080', 'scid-2090', 'scid-2507', 'scid-2511', 'scid-2513',
+    'scid-2501', 'scid-2512', 'scid-2504', 'scid-2508', 'scid-2506', 'scid-2500', 'scid-2503', 'scid-2505',
+    'scid-2502', 'scid-2509', 'scid-2514')
+| summarize arg_max(Timestamp, IsCompliant, IsApplicable) by DeviceId, ConfigurationId
+| extend Test = case(
+    ConfigurationId == 'scid-2000', 'SensorEnabled',
+    ConfigurationId == 'scid-2001', 'SensorDataCollection',
+    ConfigurationId == 'scid-2002', 'ImpairedCommunications',
+    ConfigurationId == 'scid-2003', 'TamperProtection',
+    ConfigurationId == 'scid-2010', 'AntivirusEnabled',
+    ConfigurationId == 'scid-2011', 'AntivirusSignatureVersionUpdated',
+    ConfigurationId == 'scid-2012', 'AVRealtimeProtection',
+    ConfigurationId == 'scid-91', 'AVBehaviorMonitoring',
+    ConfigurationId == 'scid-2013', 'PUAProtection',
+    ConfigurationId == 'scid-2014', 'MAPSReporting',
+    ConfigurationId == 'scid-2016', 'CloudProtection',
+    ConfigurationId == 'scid-2071', 'FirewallDomainProfile',
+    ConfigurationId == 'scid-2072', 'FirewallPrivateProfile',
+    ConfigurationId == 'scid-2073', 'FirewallPublicProfile',
+    ConfigurationId == 'scid-2051', 'ApplicationGuardManagedMode',
+    ConfigurationId == 'scid-2021', 'ControlledFolderAccess',
+    ConfigurationId == 'scid-2004', 'EDRInBlockMode',
+    ConfigurationId == 'scid-2080', 'CredentialGuard',
+    ConfigurationId == 'scid-2090', 'Encrypt all Bitlocker Supported Drives',
+    ConfigurationId == 'scid-2507', '{127900eb-5d83-4a71-bcfe-1cae2414ef16}', //
+    ConfigurationId == 'scid-2511', '{b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4}', //Block untrusted and unsigned processes that run from USB
+    ConfigurationId == 'scid-2513', '{7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c}', //Block Adobe Reader from creating child processes
+    ConfigurationId == 'scid-2501', '{D4F940AB-401B-4EFC-AADC-AD5F3C50688A}', //Block all Office applications from creating child processes
+    ConfigurationId == 'scid-2512', '{26190899-1602-49e8-8b27-eb1d0a1ce869}', //Block Office communication application from creating child processes
+    ConfigurationId == 'scid-2504', '{D3E037E1-3EB8-44C8-A917-57927947596D}', //Block JavaScript or VBScript from launching downloaded executable content
+    ConfigurationId == 'scid-2508', '{c1db55ab-c21a-4637-bb3f-a12568109d35}', //Use advanced protection against ransomware
+    ConfigurationId == 'scid-2506', '{92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B}', //Block Win32 API calls from Office macro
+    ConfigurationId == 'scid-2500', '{BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550}', //Block executable content from email client and webmail
+    ConfigurationId == 'scid-2503', '{75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84}', //Block Office applications from injecting code into other processes
+    ConfigurationId == 'scid-2505', '{5BEB7EFE-FD9A-4556-801D-275E5FFC04CC}', //Block execution of potentially obfuscated scripts
+    ConfigurationId == 'scid-2502', '{3B576869-A4EC-4529-8536-B80A7769E899}', //Block Office applications from creating executable content
+    ConfigurationId == 'scid-2509', '{9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2}', //Block credential stealing from the Windows local security authority subsystem (lsass.exe)
+    ConfigurationId == 'scid-2514', '{e6db77e5-3df2-4cf1-b95a-636979351e5b}', //Block persistence through WMI event subscription
+  'N/A'),
+Result = case(IsApplicable == 0, 'N/A', IsCompliant == 1, 'ON', 'OFF')
+| summarize ConfigurationName=any(Test), TotalApplicableMachines=dcountif(DeviceId, IsApplicable == 1), CompliantMachines=dcountif(DeviceId, IsCompliant == 1), NonCompliantMachines=dcountif(DeviceId, IsCompliant != 1) by ConfigurationId
