@@ -5,7 +5,6 @@ let McAfeeVersions = DeviceTvmSoftwareInventoryVulnerabilities
     | where SoftwareVendor =~ 'McAfee'//add other AV vendors here
     | where SoftwareName in ('virusscan', 'endpoint_security');//add other AV SoftwareName here
 DeviceEvents
-//| where DeviceId == "aae2430eda42180bdf9a65f5537c1abcf6ebfa23"
 | where ActionType == 'AntivirusDetection'
 | extend pj = parsejson(AdditionalFields) 
 | extend ThreatName = tolower(tostring(pj.ThreatName))
