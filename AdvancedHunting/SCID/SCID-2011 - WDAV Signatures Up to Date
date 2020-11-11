@@ -1,9 +1,0 @@
-//query for WDAV compliance via SCID-2011 via configuration assessment schema
-//Check that WDAV Antivirus signatures are up to date via configuration ID
-//Use this data to assess up to dateness of AV definitions on machines, and for PowerBI reports, etc.
-//jesse.esquivel@microsoft.com
-DeviceTvmSecureConfigurationAssessment
-| where ConfigurationSubcategory == "Antivirus"
-| where ConfigurationId == "scid-2011"
-| summarize MachineCount=dcount(ComputerName) by IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
-| project MachineCount, IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
