@@ -1,0 +1,29 @@
+//WVD - Testing Queries
+//starter queries to test preview support of MDE on WVD
+//jesse.esquivel@microsoft.com
+
+//check network events and ensure we have data for multiple users on the same host
+DeviceNetworkEvents
+| where Timestamp >= ago(24h)
+//| where DeviceName == "<Device Name>" //<--WVD Host here
+| where InitiatingProcessFileName has_any ("firefox.exe", "chrome.exe", "msedge.exe", "iexplore.exe")
+| where RemoteIPType == "Public" and RemotePort in ("80", "443")
+| summarize TimesHit = count() by RemoteUrl, InitiatingProcessAccountName
+
+//If using WCF check that we have data for multiple users on the same host
+DeviceEvents
+| where Timestamp >= ago(24h)
+//| where DeviceName == "<Device Name>" //<--WVD Host here
+| where ActionType == 'ExploitGuardNetworkProtectionBlocked' //smartscreenurlwarning
+| extend pj = parse_json(AdditionalFields)
+| extend ResponseCategory = pj.ResponseCategory
+| where ResponseCategory == 'CustomPolicy'
+| join kind=leftouter(DeviceInfo) on DeviceId
+| summarize TimesBlocked = count() by RemoteUrl, InitiatingProcessAccountName
+
+//check user based processes
+DeviceProcessEvents
+| where Timestamp >= ago(24h)
+//| where DeviceName == "<Device Name>" //<--WVD Host here
+| where InitiatingProcessAccountName !in("system", "local service", "network service")
+| summarize count() by InitiatingProcessAccountName, InitiatingProcessParentFileName
