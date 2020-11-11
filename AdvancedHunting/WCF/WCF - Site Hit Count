@@ -1,0 +1,8 @@
+//WCF Queries
+//starter to see website hitcount by AccountName
+DeviceNetworkEvents
+//| where InitiatingProcessAccountName == "<SamAccountName>"
+| where InitiatingProcessFileName has_any ("firefox.exe", "chrome.exe", "msedge.exe", "iexplore.exe")
+| where RemoteIPType == "Public" and RemotePort in ("80", "443")
+| summarize HitCount = count() by RemoteUrl, InitiatingProcessAccountName
+| sort by HitCount desc
