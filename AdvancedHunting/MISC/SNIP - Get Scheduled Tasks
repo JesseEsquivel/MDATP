@@ -1,0 +1,6 @@
+//get scheduled tasks
+DeviceEvents
+| where ActionType startswith "ScheduledTask" 
+| extend parsejson = parsejson(AdditionalFields)
+| extend TaskName = parsejson.TaskName
+| project Timestamp, DeviceId, DeviceName, ActionType, TaskName 
