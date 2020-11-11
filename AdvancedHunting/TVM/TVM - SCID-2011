@@ -1,0 +1,6 @@
+//SCID-2011 compliance - Update Microsoft Defender Antivirus definitions
+DeviceTvmSecureConfigurationAssessment
+| where ConfigurationSubcategory == 'Antivirus'
+| where ConfigurationId == 'scid-2011'
+| summarize MachineCount=dcount(DeviceName) by IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
+| project MachineCount, IsCompliant, ConfigurationSubcategory, ConfigurationId, ConfigurationImpact, Timestamp
