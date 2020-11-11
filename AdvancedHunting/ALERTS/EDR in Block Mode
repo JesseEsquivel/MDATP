@@ -1,0 +1,28 @@
+//Threat detections including EDR in block mode events where passive mode is true, report source is Defender, and remediated is true
+//Includes 3rd party AV installed (McAfee in this case)
+//jesse.esquivel@microsoft.com
+let McAfeeVersions = DeviceTvmSoftwareInventoryVulnerabilities
+    | where SoftwareVendor =~ 'McAfee'//add other AV vendors here
+    | where SoftwareName in ('virusscan', 'endpoint_security');//add other AV SoftwareName here
+DeviceEvents
+//| where DeviceId == "aae2430eda42180bdf9a65f5537c1abcf6ebfa23"
+| where ActionType == 'AntivirusDetection'
+| extend pj = parsejson(AdditionalFields) 
+| extend ThreatName = tolower(tostring(pj.ThreatName))
+| extend Family = trim_end('\\W.+',trim_start('[/]', substring(ThreatName, indexof_regex(ThreatName,'[/]'))))
+| extend Remediated = tostring(pj.WasRemediated)
+| extend ReportSource = tostring(pj.ReportSource)
+| extend PassiveMode = tostring(pj.IsPassiveMode)
+| summarize Detections = count() by Timestamp , DeviceId, DeviceName, ActionType, ThreatName, Family, ReportSource, Remediated, PassiveMode
+| join kind=inner(
+    DeviceAlertEvents
+    | extend Family = tolower(tostring(split(Title, "'")[1]))
+    ) on Family//, ReportId // < -- Can't use this to join as it is not the same value in both tables after comparing ReportId (DeviceEvents) and ReportId1 (DeviceAlertEvents) :(
+| join kind=leftouter(McAfeeVersions) on DeviceId
+| project Timestamp, ReportId, DeviceId, DeviceName, ActionType, ThreatName, Remediated, ReportSource, PassiveMode,
+    3rdPartyAVVendor=SoftwareVendor, 3rdPartyAV=SoftwareName, 3rdPartyAVVersion=SoftwareVersion, AlertId, AlertTimeStamp=Timestamp1,
+    Severity, Category, Title, AttackTechniques, OSPlatform, OSVersion, OSArchitecture, CveId, VulnerabilitySeverityLevel, Detections
+//need to pack all AVdetections from DeviceEvents into the corresponding alert from DeviceAlertEvents table set so they are in one row (next two lines)
+| extend packed = pack_all()
+| summarize AlertDetections = make_bag(packed) by AlertId
+| evaluate bag_unpack(AlertDetections, columnsConflict='replace_source')
