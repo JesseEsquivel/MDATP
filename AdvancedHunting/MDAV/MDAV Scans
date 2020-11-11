@@ -1,0 +1,19 @@
+// MDAV Scan data
+// -Scan types
+// -Failed scans errors
+// jesse.esquivel@microsoft.com
+
+//scan types
+DeviceEvents
+| where ActionType startswith 'AntivirusScan'
+| extend AVScanData=parsejson(AdditionalFields)
+| extend ScanType = tostring(AVScanData.ScanTypeIndex)
+| summarize AVScans=count() by ScanType, ActionType
+
+//Failed scans errors
+DeviceEvents
+| where ActionType == 'AntivirusScanFailed'
+| extend pj = parse_json(AdditionalFields)
+| extend ErrorCode = tostring(pj.ErrorCode)
+| extend ErrorDescription = tostring(pj.ErrorDescription)
+| summarize FailedScans = count() by ErrorDescription, ErrorCode
