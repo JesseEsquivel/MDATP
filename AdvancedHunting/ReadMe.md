@@ -1,2 +1,2 @@
-# MDATP Advanced Hunting Queries
-Queries to get started hunting in the MDATP console!
+# MDE Advanced Hunting Queries
+Queries to get started hunting in the MDE console!
