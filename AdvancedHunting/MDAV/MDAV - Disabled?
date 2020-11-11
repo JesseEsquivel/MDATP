@@ -1,0 +1,6 @@
+//Windows machines with disableAntivirus or DisableAntiSpyware set via the registry
+DeviceRegistryEvents
+| where RegistryKey == @'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender' or RegistryKey == @'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender'
+| where RegistryValueName == 'DisableAntiSpyware' or RegistryValueName == 'DisableAntiVirus'
+| where RegistryValueData == '1'
+| summarize DefenderDisabledMachines = dcount(DeviceId) by RegistryValueName, InitiatingProcessFileName, InitiatingProcessCommandLine
