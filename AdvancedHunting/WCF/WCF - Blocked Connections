@@ -1,0 +1,9 @@
+//WCF blocked connections
+//jesse.esquivel@microsoft.com
+DeviceEvents
+| where ActionType == 'ExploitGuardNetworkProtectionBlocked' //smartscreenurlwarning
+| extend pj = parse_json(AdditionalFields)
+| extend ResponseCategory = pj.ResponseCategory
+| where ResponseCategory == 'CustomPolicy'
+| join kind=leftouter(DeviceInfo) on DeviceId
+| summarize count() by RemoteUrl, MachineGroup//, InitiatingProcessAccountName
