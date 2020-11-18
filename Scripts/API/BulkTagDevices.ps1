@@ -87,7 +87,6 @@ Function closeScript($exitCode)
 $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
 StartScript
 
-#process all EXCHFRST users in Bulk to mail enable
 Write-Host "*************************************************************************************" -ForegroundColor White
 Write-Host "Phase 1 - Get Target Machines based on rbacGroupId and Tag..." -ForegroundColor White
 Write-Host "*************************************************************************************" -ForegroundColor White
