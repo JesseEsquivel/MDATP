@@ -1,6 +1,26 @@
 # Migrate McAfee --> Defender
 Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
+                                          @@@@@@@@@@@@@@                     
+                                          @@#@@@@@@@(//////@@@@                 
+                     %@@              @@@. /@@@@@@@((@((@(@@@@@@                
+                      @@.@@@   @@@@@@@@@@@@(@@@@@@@@(*@  @@#..(#@               
+                        @@..,@//   ////@@@@@#@//////// ,.////////@(             
+                          @@,.       //////@@@@@@@///.////@@@@@@@@              
+                         &@@            //@@@@@@@@../////@@@@((@@@              
+                 @@@@##@@%                 /@@@@#//,....@@@@@@@((@              
+             @@@###/./....# @@@@@@     .    .....//////(((((((((@@@@@           
+       @@#@@@####//////...#@@@@@@@@    ..    ..//////,...     @/(((///@@@       
+    @@ @######///////,/###@@@@@@@@@@         .,///......        ////(((///@@@//@
+   @#####//######/######@@@@@      ..           ###,....        @@(((/////////@@
+@@@@#####///#//####@@@@@@@                      ##### .         @@@@@(((((((@@  
+ &@@@@@@/######@@@@@@@@@   @...@@   @@@@@@@@@@@@@(  @&         @@@@@@@@@@@@@    
+     @@@@#&@@%@@@@@@@@@@  @@@..@@@                    @@       ...@@@@@@@@      
+         (@@@@@@@@@@@@@@@@@@@@                           (@@*    ...@@@@@       
+                                                             @&   @...@@        
+                                                               @@    @@         
+                                                                 @@@@@@         
+                                                                          
 
 # Migrate Firewall Rules
 The following two scripts can be used to convert McAfee firewall rules to MDF.
@@ -107,6 +127,12 @@ RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
 ```
 Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. Please note that these are sample scripts, your mileage may vary! :grinning:
 
+## Convert-MFWRules.ps1
+This script will read in an exported McAfee AV exclusion xml, and export the AV exclusions in Microsoft Defender AV format!  It produces two columns in a CSV:
 
+Exclusion                    | Note
+| :--- | :---
+C:\Program Files\Rock Band\  | Added by Bob (867-5309)
 
+Enjoy! :smiling_imp:
 
