@@ -1,7 +1,14 @@
 # Migrate McAfee --> Defender
 Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
-                                          @@@@@@@@@@@@@@                     
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                             @@@@@@@@@@@@@@                     
                                           @@#@@@@@@@(//////@@@@                 
                      %@@              @@@. /@@@@@@@((@((@(@@@@@@                
                       @@.@@@   @@@@@@@@@@@@(@@@@@@@@(*@  @@#..(#@               
@@ -20,7 +27,12 @@ Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
                                                              @&   @...@@        
                                                                @@    @@         
                                                                  @@@@@@         
-                                                                          
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
 
 # Migrate Firewall Rules
 The following two scripts can be used to convert McAfee firewall rules to MDF.
