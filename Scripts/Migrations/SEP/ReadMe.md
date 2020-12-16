@@ -1,4 +1,4 @@
-# Migrate McAfee --> Defender
+# Migrate Symantec Endpoint Protection --> Defender
 Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
 
