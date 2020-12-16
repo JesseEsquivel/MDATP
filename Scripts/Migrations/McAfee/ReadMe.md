@@ -128,7 +128,7 @@ RemotePort = if($rule.Protocol -eq "TCP" -or $rule.Protocol -eq "UDP")
 ```
 Once you execute this script (on your VM), it will begin to import the firewall rules into MDF.  When it is complete you can click refresh on the Inbound and Outbound sections and you will see your firewall rules for review. Please note that these are sample scripts, your mileage may vary! :grinning:
 
-## Convert-MFWRules.ps1
+## Convert-MAVExclusions.ps1
 This script will read in an exported McAfee AV exclusion xml, and export the AV exclusions in Microsoft Defender AV format!  It produces two columns in a CSV:
 
 Exclusion                    | Note
