@@ -1,5 +1,5 @@
-# Migrate from 3rd party security solutions --> Microsoft Defender for Endpoint
-
+# Migrate McAfee --> Defender
+Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
 
                                              @@@@@@@@@@@@@@                     
