@@ -4,7 +4,11 @@
 # Microsoft
 # BulkTagDevices.ps1
 # jesse.esquivel@microsoft.com
-# -Bulk tag devices using Defender for Endpoint API
+# -Bulk tag devices using Defender API
+# -01/12/21 Updated to handle more than 10K objects from API
+#
+#
+# 
 # 
 # Microsoft Disclaimer for custom scripts
 # ================================================================================================================
@@ -26,23 +30,24 @@
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $token = Get-Content "$scriptDir\Latest-token.txt"
-$DeviceTag = "Testing 1 2"
+$DeviceTag = "New Tag"
 
 #You must find your rbacGroupId in order to tag machines, do this by issuing the following in API explorer in the security center portal:
 #GET https://api-us.securitycenter.windows.com/api/machines/{machineId} 
 #It will look like this:
 # 
-#"rbacGroupId": 1234,
-#"rbacGroupName": "Name of your MachineGroup 1"
+#	"rbacGroupId": 1234,
+#	"rbacGroupName": "Proseware.com"
 #
-# Or this:
+#Or this:
 #
-#"rbacGroupId": 4321,
-#"rbacGroupName": "Name of your MachineGroup 2"
+#	"rbacGroupId": 5678,
+#	"rbacGroupName": "Contoso.com"
 #
-#for example a query for all machines in rbacGroupId 1234 above looks like this:
-#https://api.securitycenter.windows.com/api/machines?$filter=rbacGroupId+eq+1234
+#query for all machines in rbacGroupId 5678 above looks like this:
+#https://api.securitycenter.windows.com/api/machines?$filter=rbacGroupId+eq+5678
 
+#working with current rbacgroup below
 $rbacGroupId = "1234"
 
 ##################################################################################################################
@@ -88,7 +93,7 @@ $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
 StartScript
 
 Write-Host "*************************************************************************************" -ForegroundColor White
-Write-Host "Phase 1 - Get Target Machines based on rbacGroupId and Tag..." -ForegroundColor White
+Write-Host "Phase 1 - Get Target Machines based on rbacGroupId..." -ForegroundColor White
 Write-Host "*************************************************************************************" -ForegroundColor White
 Write-Host
 
@@ -116,13 +121,51 @@ catch
     closeScript 1
 }
 
-#iterate the returnset and grab the machineId of each machine to be used to call the API and set the new machine tag
-$machines = $response.Content | ConvertFrom-Json | select -expand value | select id, computerDNSName
+#Add the machines from the API response to a hashtable
+$queryResponse = $response.Content | ConvertFrom-Json | select -expand value | select id, computerDNSName
+$next = $response.Content | ConvertFrom-Json | Select-Object '@odata.nextLink'
+$nextLink = $next.'@odata.nextLink'
+$machines = @()
+$machines += $queryResponse
+
+#Determine if more machines need to be queried (@odata.nextLink exists), if so chase and repeat
+if($nextLink)
+{
+    do
+    {
+        try
+        {
+            Write-Host "Additional returnset exists, querying API..." -ForegroundColor Cyan
+            $moreObjects = Invoke-WebRequest -Method Get -Uri $nextLink -Headers $headers -ErrorAction Stop
+            $queryResponse = $moreObjects.Content | ConvertFrom-Json | select -expand value | select id, computerDNSName
+            $next = $moreObjects.Content | ConvertFrom-Json | Select-Object '@odata.nextLink'
+            $nextLink = $next.'@odata.nextLink'  
+            Write-Host "Success. Machines returned this query: $($queryResponse.Count)" -ForegroundColor Green
+            Write-Host
+            $machines += $queryResponse
+        }
+        catch
+        {
+            Write-Host "Failed to get device list from API: $($_.Exception.Message)" -ForegroundColor Red
+            closeScript 1
+        }
+    }
+    while($nextLink)
+}
+
+Write-Host "Data query completed..." -ForegroundColor Cyan
+Write-Host "Success. Total machines returned: $($machines.Count)" -ForegroundColor Green
+Write-Host
+
+#Phase 2 tag machines
+Write-Host "*************************************************************************************" -ForegroundColor White
+Write-Host "Phase 2 - Tag Target Machines..." -ForegroundColor White
+Write-Host "*************************************************************************************" -ForegroundColor White
+Write-Host
+
 $i = 1
 foreach($machine in $machines)
 {
-    #Write-Host $machine.Id $machine.computerDnsName -ForegroundColor Green
-    #$deviceId = $machine.id
     try
     {
         Write-Host "Tagging" $i "of" $machines.Count "Devices ($($machine.computerDnsName))..." -ForegroundColor Cyan
