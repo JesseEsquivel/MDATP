@@ -1,4 +1,4 @@
-# :cat: MDE API :cat:
+# :cat: Defender for Endpoint API :cat:
 Microsoft Defender for Endpoint API.  An app registration in AzureAD is required to access the API. Documentation is here:
 
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/apis-intro
