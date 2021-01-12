@@ -11,6 +11,6 @@ This is a PowerShell script used to access the API and tag machines in bulk.  Ad
 
 https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-atp/machine#properties
 
-If you're bulk tagging a large number of devices (thousands) ensure that your token lifetime for your AzureAD application is long enough to support the duration of the tagging job that is running, else your token will expire and your job will error with a 401 unauthorized error. :thumbsup:
+If you're bulk tagging a large number of devices (thousands) ensure that your token lifetime for your AzureAD application is long enough to support the duration of the tagging job that is running, else your token will expire and your job will error with a 401 unauthorized error. Also ensure that you are granting the minimum permissions required to the AzureAD application for tagging machines.  :thumbsup:
 
 https://docs.microsoft.com/en-us/azure/active-directory/develop/configure-token-lifetimes#create-a-policy-for-a-native-app-that-calls-a-web-api
