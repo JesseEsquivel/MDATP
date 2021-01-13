@@ -4,7 +4,7 @@
 # Microsoft Premier Field Engineering
 # jesse.esquivel@microsoft.com
 # ImportMFW-Rules.ps1
-# v1.0 Initial creation 10/19/2020 - Import MDF rules from McAfee output CSV
+# v1.0 Initial creation 10/19/2020 - Import MDF rules from McAfee or SEP output CSV
 #
 # 
 # 
