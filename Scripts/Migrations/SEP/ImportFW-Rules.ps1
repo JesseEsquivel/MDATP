@@ -27,7 +27,7 @@
 
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$CSVFile = "$scriptDir\VA-output.csv"
+$CSVFile = "$scriptDir\output.csv"
 $FirewallRules = Get-Content $CSVFile | ConvertFrom-CSV
 
 ##################################################################################################################
