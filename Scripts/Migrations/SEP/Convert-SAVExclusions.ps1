@@ -27,7 +27,7 @@
 
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-[xml]$sourceExclusions = Get-Content "$scriptDir\yourSEPexport.xml"
+[xml]$sourceExclusions = Get-Content "$scriptDir\yourExported.xml"
 $rawOutput = "$scriptDir\AVExclusions-RawOutput.txt"
 $output = "$scriptDir\AVExclusions-Output.txt"
 
