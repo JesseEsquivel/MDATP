@@ -31,7 +31,7 @@
 
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-[xml]$sourceRules = Get-Content "$scriptDir\source.xml"
+[xml]$sourceRules = Get-Content "$scriptDir\yourExported.xml"
 
 ##################################################################################################################
 # Functions
