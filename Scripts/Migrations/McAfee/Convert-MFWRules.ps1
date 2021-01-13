@@ -27,7 +27,7 @@
 
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-[xml]$sourceRules = Get-Content "$scriptDir\source.xml"
+[xml]$sourceRules = Get-Content "$scriptDir\yourExported.xml"
 $FWRuleNamePrepend = "TEST" #whatever string is set here will be prepended to all firewall rule names/displaynames
 
 ##################################################################################################################
