@@ -3,7 +3,7 @@
 #
 # Microsoft Customer Experience Engineering
 # jesse.esquivel@microsoft.com
-# Convert-SEPExclusions.ps1
+# Convert-SAVExclusions.ps1
 # v1.0 Initial creation 12/10/2020 - Export SEP AV Exclusions into Defender format from xml
 #
 # 
