@@ -106,7 +106,7 @@ Remote Address                   | Program                                    | 
 
 Once you have all three of these columns sanitized for your environment you can move on to importing the firewall rules into MDF.
 
-## Import-MFWRules.ps1
+## Import-FWRules.ps1
 The second script will take the sanitized csv output (by file name), and use it to import the firewall rules into MDF on a Windows 10/Server 2016 or above machine in bulk. The csv contains all of the columns necessary that map to parameters of the PowerShell [New-NetFirewallRule](https://docs.microsoft.com/en-us/powershell/module/netsecurity/new-netfirewallrule?view=win10-ps) cmdlet, and the three columns above have been sanitized according to the environment.  This is reccomended to be done on a virtual machine for testing, this way you can import all of the firewall rules and view them in the Windows Firewall with Advanced Security snap-in.
 
 ### Human induced whitespace and non-valid characters
