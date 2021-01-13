@@ -3,7 +3,7 @@
 #
 # Microsoft Customer Experience Engineering
 # jesse.esquivel@microsoft.com
-# Convert-AVExclusions.ps1
+# Convert-MAVExclusions.ps1
 # v1.0 Initial creation 12/03/2020 - Export McAfee AV Exclusions into Defender format from xml
 #
 # 
