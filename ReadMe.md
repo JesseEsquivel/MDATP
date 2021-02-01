@@ -1,4 +1,4 @@
-### MDATP
+### Microsoft Defender for Endpoint
 
 Microsoft Defender for Endpoint.
                                                                
