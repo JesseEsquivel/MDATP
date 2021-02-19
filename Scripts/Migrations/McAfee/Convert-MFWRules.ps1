@@ -22,7 +22,7 @@
 # ================================================================================================================
 #
 ##################################################################################################################
-# Script variables - please do not change these unless you know what you are doing
+# Script variables
 ##################################################################################################################
 #>
 
@@ -33,7 +33,7 @@ $output = "$scriptDir\FWRules-Output.txt"
 $FWRuleNamePrepend = "TEST" #whatever string is set here will be prepended to all firewall rule names/displaynames
 
 ##################################################################################################################
-# Functions - please do not change unless you know what you are doing
+# Functions
 ##################################################################################################################
 
 Function startScript()
@@ -86,7 +86,7 @@ Function Replace-Strings($raw)
 }
 
 ##################################################################################################################
-# Begin Script  - please do not change unless you know what you are doing
+# Begin Script
 ##################################################################################################################
 
 $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
