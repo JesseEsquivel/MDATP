@@ -5,6 +5,7 @@
 # jesse.esquivel@microsoft.com
 # Convert-MFWRules.ps1
 # v1.0 Initial creation 10/08/2020 - Convert McAfee Firewall Rules to Microsoft Defender Firewall (MDF) format
+# v1.1 02/19/2021 - Fixed issue where all rules were not exported, added replace strings function
 #
 # 
 # 
@@ -28,6 +29,7 @@
 $VBCrLf = "`r`n"
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 [xml]$sourceRules = Get-Content "$scriptDir\yourExported.xml"
+$output = "$scriptDir\FWRules-Output.txt"
 $FWRuleNamePrepend = "TEST" #whatever string is set here will be prepended to all firewall rule names/displaynames
 
 ##################################################################################################################
@@ -68,6 +70,21 @@ Function closeScript($exitCode)
     exit $exitCode
 }
 
+Function Replace-Strings($raw)
+{
+    #add more regex here if you need to replace more strings
+    Get-Content $raw | Foreach-Object {
+        $_ -replace '(\*\*\\)', '' `
+           -replace '(.\\Windows\\system32)', '%SystemRoot%\System32' `
+           -replace '(C:\\Windows)', '%WinDir%' `
+           -replace '(.:\\Program Files \(x86\)\\)', '%ProgramFiles(x86)%\' `
+           -replace '(.:\\Program Files\*\\|.:\\Program Files\\)', '%ProgramFiles%\' `
+           -replace '(.:\\ProgramData\\)', '%ProgramData%\' `
+           -replace '(%ProgramFiles\*%\\)', '%ProgramFiles%\' `
+           -replace '(\*\\~)', '\*~'
+        } | Set-Content $output
+}
+
 ##################################################################################################################
 # Begin Script  - please do not change unless you know what you are doing
 ##################################################################################################################
@@ -85,99 +102,105 @@ $firewallRules = @()
 $i = 1
 foreach($item in $sourceRules.EPOPolicySchema.EPOPolicySettings.Section)
 {
-    Write-Host "Capturing" $i "of" $sourceRules.EPOPolicySchema.EPOPolicySettings.Section.Count "Firewall Rules..." -ForegroundColor Cyan
+    Write-Host "Capturing" $i "of" $sourceRules.EPOPolicySchema.EPOPolicySettings.Section.Count "Firewall Rule Sections..." -ForegroundColor Cyan
     $HashProps = [PSCustomObject]@{}
-    #Loop all aggregate sections of XML
-    if($item.name -eq "AggregateCriterion")
+    #Loop all sections of XML
+    $targetGUIDName = $null            
+    $targetGUID = $null
+    $targetDestName = $null
+    $targetDest = $null
+
+    $settings = $item.Setting
+    #For each aggregate section find the GUID value
+    foreach($setting in $settings)
     {
-        $settings = $item.Setting
-        #For each aggregate section find the GUID value
-        foreach($setting in $settings)
-        {
-            switch($setting.name)
+        switch($setting.name)
             {
                 'GUID'{$targetGUIDName = $setting.name;$targetGUID = $setting.value}
                 'Name'{$targetDestName = $setting.name;$targetDest = $setting.value}
                 '+AppPath#0'{if($setting.value){$appPath = $setting.value}else{$appPath = 'ANY'}} #<-check for empty string in value
             }
-        }
-        #give props where props are due
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "CorrelatedGUID" -Value $targetGUID
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Program" -Value $appPath #pass ANY if null!!
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Address" -Value $targetDest
-        #add required Windows Firewall specific params
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Profile" -Value 'ANY'
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Interface Type" -Value 'ANY'
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Local Port" -Value 'ANY' #<-- this is required as header must be present in all hash tables in order to output to CSV
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Port" -Value '' #<-- this is required as header must be present in all hash tables in order to output to CSV
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value 'TCP' #<-- this is required as header must be present in all hash tables in order to output to CSV - this cant be ANY if a RemotePort value is present, default here to TCP
-        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Direction" -Value $null #<-- this is required as header must be present in all hash tables in order to output to CSV
-        Write-Host "Merging AggregateCriterion Rule Values..." -ForegroundColor DarkCyan
-        foreach($item in $sourceRules.EPOPolicySchema.EPOPolicySettings.Section)
+    }
+    if(!($targetDest))
+    {
+        $targetDest = 'ANY'
+    }
+    #give props where props are due
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "CorrelatedGUID" -Value $targetGUID
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Program" -Value $appPath #pass ANY if null!!
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Address" -Value $targetDest
+    #add required Windows Firewall specific params
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Profile" -Value 'ANY'
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Interface Type" -Value 'ANY'
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Local Port" -Value 'ANY' #<-- this is required as header must be present in all hash tables in order to output to CSV
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Port" -Value '' #<-- this is required as header must be present in all hash tables in order to output to CSV
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value 'TCP' #<-- this is required as header must be present in all hash tables in order to output to CSV - this cant be ANY if a RemotePort value is present, default here to TCP
+    Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Direction" -Value $null #<-- this is required as header must be present in all hash tables in order to output to CSV
+    Write-Host "Merging AggregateCriterion Rule Values..." -ForegroundColor DarkCyan
+    foreach($item in $sourceRules.EPOPolicySchema.EPOPolicySettings.Section)
+    {
+        #Search all non-aggregate sections of the xml for the GUID value and scrape the needed values for the FW rule
+        $settings = $item.Setting
+        foreach($setting in $settings)
         {
-            #Search all non-aggregate sections of the xml for the GUID value and scrape the needed values for the FW rule
-            if($item.name -ne "AggregateCriterion")
+            if($setting.value -eq $targetGUID)
             {
-                $settings = $item.Setting
                 foreach($setting in $settings)
                 {
-                    if($setting.value -eq $targetGUID)
+                    if($setting.name -ne "Note") #note column has ; in it which delimit in the csv output even though a different delimeter is selected :\
                     {
-                        foreach($setting in $settings)
+                        if(!$appPath)
                         {
-                           if($setting.name -ne "Note") #note column has ; in it which delimit in the csv output even though a different delimeter is selected :\
-                           {
-                                if(!$appPath)
-                                {
-                                     Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Program" -Value 'ANY' -Force
-                                }
-                                switch($setting.name)
-                                {
-                                    'Name'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "DisplayName" -Value "$FWRuleNamePrepend-$($setting.value)" -Force}
-                                    '+LocalPort#0'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Local Port" -Value $setting.value -Force}
-                                    '+RemotePort#0'{if($setting.value){$remotePort = $setting.value}else{$remotePort = 'ANY'}}
-                                    '+TransportProtocol#0'{
-                                        switch($setting.value)
-                                        {
-                                            '17'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value "UDP" -Force}
-                                            '6'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value "TCP" -Force}
-                                            Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value $setting.value -Force}
-                                        }
-                                    }
-                                    'Direction'{
-                                        switch($setting.value)
-                                        {
-                                            'IN'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'INBOUND' -Force}
-                                            'OUT'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'OUTBOUND' -Force}
-                                            'BOTH'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
-                                            'EITHER'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
-                                        }
-                                    }
-                                    'Enabled'{
-                                        switch($setting.value)
-                                        {
-                                            '1'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'TRUE' -Force}
-                                            '0'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'FALSE' -Force}
-                                        }
-                                    }
-                                    'Action'{
-                                        switch($setting.value)
-                                        {
-                                            'ALLOW'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
-                                            'BLOCK'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
-                                            Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'ALLOW' -Force}
-                                        }
-                                    }
-                                    #to only export rules in MDF format comment out the next line
-                                    #Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
-                                }
-                                Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Port" -Value $remotePort -Force
-                           }
+                            Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Program" -Value 'ANY' -Force
                         }
+                        switch($setting.name)
+                        {
+                            'Name'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "DisplayName" -Value "$FWRuleNamePrepend-$($setting.value)" -Force}
+                            '+LocalPort#0'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Local Port" -Value $setting.value -Force}
+                            '+RemotePort#0'{if($setting.value){$remotePort = $setting.value}else{$remotePort = 'ANY'}}
+                            '+TransportProtocol#0'{
+                            switch($setting.value)
+                            {
+                                '17'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value "UDP" -Force}
+                                '6'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value "TCP" -Force}
+                                Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Protocol" -Value $setting.value -Force}
+                            }
+                        }
+                        'Direction'{
+                         switch($setting.value)
+                             {
+                                'IN'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'INBOUND' -Force}
+                                'OUT'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'OUTBOUND' -Force}
+                                'BOTH'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
+                                'EITHER'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
+                             }
+                        }
+                        'Enabled'{
+                         switch($setting.value)
+                            {
+                                '1'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'TRUE' -Force}
+                                '0'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'FALSE' -Force}
+                            }
+                        }
+                        'Action'{
+                            switch($setting.value)
+                            {
+                                'ALLOW'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
+                                'BLOCK'{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
+                                Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value 'ALLOW' -Force}
+                            }
+                        }
+                        #to only export rules in MDF format comment out the next line
+                        #Default{Add-Member -InputObject $HashProps -MemberType NoteProperty -Name $setting.name -Value $setting.value -Force}
+                        }
+                        Add-Member -InputObject $HashProps -MemberType NoteProperty -Name "Remote Port" -Value $remotePort -Force
                     }
                 }
-            }     
-        }
+            }
+        }   
+    }
+    if($targetGUID)
+    {
         $firewallRules += $HashProps
     }
     $i = $i + 1
@@ -186,7 +209,8 @@ foreach($item in $sourceRules.EPOPolicySchema.EPOPolicySettings.Section)
     Write-Host
 }
 
-$firewallRules | ConvertTo-CSV -NoTypeInformation -Delimiter '~' | Set-Content $scriptDir\output.txt
+$firewallRules | ConvertTo-CSV -NoTypeInformation -Delimiter '~' | Set-Content $scriptDir\RawOutput.txt
+Replace-Strings $scriptDir\RawOutput.txt
 
 closescript 0
 
