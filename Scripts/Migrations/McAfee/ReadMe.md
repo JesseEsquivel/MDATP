@@ -76,7 +76,7 @@ Remote Address                   | Program                                    | 
 10.10.10.0/24                    | C:\Program Files\Java\15\java.exe          | EITHER
 
 ### The "Direction" Column
-lastly the direction column which will also need to be sanitized.  The reason is that it may have some values that the -Direction switch does not accept.  Some of these unacceptable values are listed below and will need to be replaced with values that the -Program switch will accept. Same story as the Remote Address column.
+lastly the direction column which will also need to be sanitized.  The reason is that it may have some values that the -Direction switch does not accept.  Some of these unacceptable values are listed below and will need to be replaced with values that the -Direction switch will accept. Same story as the Remote Address column.
 
 Remote Address                   | Program                                    | Direction
 | :--- | :--- | :---
