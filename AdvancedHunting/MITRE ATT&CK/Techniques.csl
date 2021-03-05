@@ -1,0 +1,44 @@
+//MITRE ATT&CK Techniques in the last 30 days
+DeviceAlertEvents
+| where isnotempty(AttackTechniques)
+| extend AT = parse_json(AttackTechniques)
+| mv-expand AT
+| summarize AlertCount = dcount(AlertId), make_set(Title) by tostring(AT)
+| sort by AlertCount desc
+
+
+//View how many AttackTechniques per Alert
+DeviceAlertEvents
+| where isnotempty(AttackTechniques)
+| extend AT = parse_json(AttackTechniques)
+| mv-expand AT
+| summarize TechniqueCount = dcount(tostring(AT)), Techniques = make_set(AT) by AlertId
+| sort by TechniqueCount desc
+
+
+//View how many AttackTechniques per alert, include all related alert info, sort
+DeviceAlertEvents
+| where isnotempty(AttackTechniques)
+| extend AT = parse_json(AttackTechniques)
+| mv-expand AT
+| extend Event = pack("Timestamp", Timestamp, "Severity", Severity, "Title", Title, "Category", Category, "DeviceName", DeviceName,
+    "FileName", FileName, "SHA1", SHA1, "RemoteUrl", RemoteUrl, "RemoteIP", RemoteIP)
+| summarize Events = make_bag(Event),TechniqueCount = dcount(tostring(AT)), Techniques = make_set(AT) by AlertId
+| evaluate bag_unpack(Events)
+| sort by TechniqueCount desc
+
+
+//view data on 6 specifically requested target techniques
+let TargetTechniques = dynamic(["Trusted Developer Utilities Proxy Execution", "Trusted Developer Utilities", 
+    "Command and Scripting Interpreter: PowerShell", "Encoded and compressed payload", 
+    "OS Credential Dumping", "Lateral Movement Detection"]);
+DeviceAlertEvents
+| where isnotempty(AttackTechniques)
+| extend AT = parse_json(AttackTechniques)
+| mv-expand AT
+| where AT has_any(TargetTechniques)
+| extend Event = pack("Timestamp", Timestamp, "Severity", Severity, "Title", Title, "Category", Category, "DeviceName", DeviceName,
+    "FileName", FileName, "SHA1", SHA1, "RemoteUrl", RemoteUrl, "RemoteIP", RemoteIP, "Table", Table)
+| summarize Events = make_bag(Event),TechniqueCount = dcount(tostring(AT)), Techniques = make_set(AT) by AlertId
+| evaluate bag_unpack(Events)
+| sort by TechniqueCount desc
