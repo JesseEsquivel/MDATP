@@ -24,7 +24,11 @@ Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
 
 
 # Migrate Firewall Rules
-The following two scripts can be used to convert McAfee firewall rules to MDF.
+The following two scripts can be used to convert McAfee firewall rules to MDF. Couple of things upfront:
+
+1. Save the script as ANSI format or it may not work
+2. The xml input file has to be in the same directory as the script
+3. Change the name of the xml file in the script to whatever the name of your file is
 
 
 ## Convert-MFWRules.ps1
