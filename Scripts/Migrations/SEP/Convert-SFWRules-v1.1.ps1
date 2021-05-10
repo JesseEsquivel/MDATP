@@ -2,10 +2,10 @@
 ##################################################################################################################
 #
 # Microsoft Premier Field Engineering
-# steve.pucelik@micrsoft.com
+# steve.pucelik@micrsoft.com - initial
 #
 # Microsoft Customer Experience Engineering
-# jesse.esquivel@microsoft.com - just for the guts, re-write to v1.1
+# jesse.esquivel@microsoft.com - just for the guts, and re-write to v1.1
 #
 # Convert-SFWRules.ps1
 # v1.0 Initial creation 1/13/2021 - Export SEP FW Exclusions into Defender format from xml
