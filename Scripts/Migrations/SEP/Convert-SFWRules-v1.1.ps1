@@ -2,10 +2,10 @@
 ##################################################################################################################
 #
 # Microsoft Premier Field Engineering
-# steve.pucelik@micrsoft.com - initial
+# steve.pucelik@micrsoft.com
 #
 # Microsoft Customer Experience Engineering
-# jesse.esquivel@microsoft.com - just for the guts, and re-write to v1.1
+# jesse.esquivel@microsoft.com - just for the guts, re-write to v1.1
 #
 # Convert-SFWRules.ps1
 # v1.0 Initial creation 1/13/2021 - Export SEP FW Exclusions into Defender format from xml
@@ -136,7 +136,7 @@ function Process-FwServiceTrigger
                                 Add-RuleProperty "Enabled" $Enabled  
                                 Add-RuleProperty "Profile" "Any" 
                                 Add-RuleProperty "Protocol" $Protocol
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
                                 CreateRule $global:HashProps
@@ -154,7 +154,7 @@ function Process-FwServiceTrigger
                                 Add-RuleProperty "Enabled" $Enabled  
                                 Add-RuleProperty "Profile" "Any" 
                                 Add-RuleProperty "Protocol" $Protocol
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
                                 CreateRule $global:HashProps
@@ -179,7 +179,7 @@ function Process-FwServiceTrigger
                                 Add-RuleProperty "Local Port" $localPort
                                 Add-RuleProperty "Remote Port" "Any"
                                 Add-RuleProperty "Protocol" $Protocol
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Remote Address" "Any"
                                 CreateRule $global:HashProps
                                 $global:FwRuleCreated = "true"
@@ -197,7 +197,7 @@ function Process-FwServiceTrigger
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" $RemotePort
                                 Add-RuleProperty "Protocol" $Protocol
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Remote Address" "Any"
                                 CreateRule $global:HashProps
                                 $global:FwRuleCreated = "true"
@@ -220,7 +220,7 @@ function Process-FwServiceTrigger
                                         Add-RuleProperty "Local Port" "Any"
                                         Add-RuleProperty "Remote Port" "Any"
                                         Add-RuleProperty "Protocol" $Protocol
-                                        Add-RuleProperty "Program"
+                                        Add-RuleProperty "Program" "Any"
                                         Add-RuleProperty "Remote Address" "Any"
                                         CreateRule $global:HashProps
                                         $global:FwRuleCreated = "true"
@@ -320,7 +320,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" $localPort
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Remote Address" "Any"
                                 $Protocol = "Any"
                                 CreateRule $global:HashProps
@@ -337,7 +337,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Enabled" $Enabled  
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Remote Port" $RemotePort
-                                Add-RuleProperty "Program" 
+                                Add-RuleProperty "Program" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Address" "Any"
                                 $Protocol = "Any"
@@ -355,7 +355,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "Any"
                                 Add-RuleProperty "Remote Address" $hostContainerItem.FirstChild.Data
                                 CreateRule $global:HashProps
@@ -372,7 +372,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "Any"
                                 foreach($rangeItem in $hostContainerItem.Attributes)
                                 {
@@ -403,7 +403,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "Any"
                                 foreach($rangeItem in $hostContainerItem.Attributes)
                                 {
@@ -434,7 +434,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "Any"
                                 Add-RuleProperty "Remote Address" $hostContainerItem.FirstChild.Data
                                 CreateRule $global:HashProps
@@ -451,7 +451,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any" 
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "Any"
                                 Add-RuleProperty "Remote Address" $hostContainerItem.FirstChild.Data
                                 CreateRule $global:HashProps
@@ -469,7 +469,7 @@ function Process-FwHostTrigger
                                 $Protocol = "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 CreateRule $global:HashProps
                                 $global:FwRuleCreated = "true"
                             }
@@ -484,7 +484,7 @@ function Process-FwHostTrigger
                                 Add-RuleProperty "Profile" "Any"
                                 Add-RuleProperty "Local Port" "Any"
                                 Add-RuleProperty "Remote Port" "Any"
-                                Add-RuleProperty "Program"
+                                Add-RuleProperty "Program" "Any"
                                 $Protocol = "ICMPv4"
                                 Add-RuleProperty "Protocol" $Protocol
                                 Add-RuleProperty "Remote Address" "Any"
@@ -740,7 +740,7 @@ function ProcessItem
         }
         if($global:FwRuleCreated -eq 'false')
         {
-            Add-RuleProperty "Program"
+            Add-RuleProperty "Program" "Any"
             Add-RuleProperty "Local Port" "Any"
             Add-RuleProperty "Remote Port" "Any"
             Add-RuleProperty "Protocol" "Any"
