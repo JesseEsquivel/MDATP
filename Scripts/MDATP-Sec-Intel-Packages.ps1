@@ -169,11 +169,11 @@ try
     Write-Host "Copying extracted files to share..."
     Copy-Item -Path $vdmpath -Destination "\\fileserver.fqdn\mdatp$\wdav-update" -Force -Recurse | Out-Null
     Remove-Item -Path "\\fileserver.fqdn\mdatp$\wdav-update\{00000000-0000-0000-0000-$vdmpathtime}\mpam-fe.exe" -Force | Out-Null
-    Get-ChildItem "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Recurse | ForEach-Object {Remove-Item $_.FullName -Recurse -Force}
     If(!(Test-Path -Path "\\fileserver.fqdn\mdatp$\wdav-update\x64"))
     {
         New-Item -ItemType Directory -Force -path "\\fileserver.fqdn\mdatp$\wdav-update\x64" | Out-Null
     }
+    Get-ChildItem "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Recurse | ForEach-Object {Remove-Item $_.FullName -Recurse -Force}
     Copy-Item -Path "$vdmpath\mpam-fe.exe" -Destination "\\fileserver.fqdn\mdatp$\wdav-update\x64" -Force -Recurse | Out-Null
 }
 catch
