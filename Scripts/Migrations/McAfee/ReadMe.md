@@ -23,6 +23,6 @@ Migrate your settings from McAfee to Microsoft Defender. :thumbsup:
                                                                  @@@@@@         
 
 
-# Scripts are deprecated! Please use [FAVE](https://github.com/OfficeDev/FAVE)
+# Scripts are deprecated! Please use [FAVE](https://github.com/OfficeDev/FAVE)!
 
 Enjoy! :smiling_imp:
