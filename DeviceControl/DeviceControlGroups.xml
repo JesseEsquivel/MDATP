@@ -1,0 +1,132 @@
+<!--
+###################################################################################################################
+Create Groups these are your block and allow media types and devices
+###################################################################################################################
+-->
+
+<Groups>
+    <!--Group 1: Block Any removable storage, CD/DVD, or WPD device -->
+	<Group Id="{9b28fae8-72f7-4267-a1a5-685f747a7146}">
+	    <!-- ./Vendor/MSFT/Defender/Configuration/DeviceControl/PolicyGroups/%7b9b28fae8-72f7-4267-a1a5-685f747a7146%7d/GroupData -->
+		<MatchType>MatchAny</MatchType>
+		<DescriptorIdList>
+			<PrimaryId>RemovableMediaDevices</PrimaryId>
+			<PrimaryId>CdRomDevices</PrimaryId>
+			<PrimaryId>WpdDevices</PrimaryId>
+		</DescriptorIdList>
+	</Group>
+
+    <!-- Group 2: Allow Approved USBs based on device properties -->
+	<Group Id="{65fa649a-a111-4912-9294-fb6337a25038}">
+		<MatchType>MatchAny</MatchType>
+		<DescriptorIdList>
+            <!--This is your allow hardware list, add entries for allowed devices here based on the DescriptorIdList property schema-->
+			<InstancePathId>USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*</InstancePathId>
+            <InstancePathId>SCSI\DISK&amp;VEN_G-TECH&amp;PROD_ARMORATD\6&amp;2054B149&amp;0&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303\17166275&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303\17166275&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_STT&amp;PROD_EXPRESS_RC8&amp;REV_0\92134223000000000006&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.26\200542560211B4208B1B&amp;*</InstancePathId>
+		</DescriptorIdList>
+	</Group>
+</Groups>
+
+<!--Examples of the "DescriptorIdList" property values for various drives
+NOTE: Removable storage device control errors are logged and can be accessed by running "%programfiles%\Windows Defender\MpCmdRun.exe" -GetFiles
+NOTE: Any & character has to be escaped in XML by replacing the & with the following text:  &amp;
+NOTE: The last digit of the InstancePathId is the slot number, which may change when you plug in a device,
+especially when you have multiple USBs connected, therefore a wildcard should be used. For example:
+
+USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*
+
+###################################################################################################################
+Kingston DataTraveler 2.0 USB Device
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP
+HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP
+FriendlyNameId - Kingston DataTraveler 2.0 USB Device
+BusId - USBSTOR
+SerialNumberId - C860008861D7EF41CA13157C&amp;0
+VID_PID - "VID_0930&amp;PID_6545" (This is the "Parent" property in device manager)
+
+###################################################################################################################
+G-TECH ArmorATD SCSI Disk Device
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - SCSI\DISK&amp;VEN_G-TECH&amp;PROD_ARMORATD\6&amp;2054B149&amp;0&amp;000000
+DeviceId - SCSI\DISK&amp;VEN_G-TECH&amp;PROD_ARMORATD
+HardwareId - SCSI\DiskG-TECH__ArmorATD________1024
+FriendlyNameId - G-TECH ArmorATD SCSI Disk Device
+BusId - SCSI
+SerialNumberId - 6&amp;2054B149&amp;0&amp;000000
+VID_PID - VID_4791&amp;PID_2057 (This is the "Parent" property in device manager)
+
+###################################################################################################################
+Imation IronKey USB Device - Public/Private
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303\17166275&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303
+HardwareId - USBSTOR\DiskImation_IronKey_Public__0303
+FriendlyNameId - Imation IronKey Public USB Device
+BusId - USBSTOR
+SerialNumberId - 17166275&amp;0
+VID_PID - VID_0718&amp;PID_0688 (This is the "Parent" property in device manager)
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303\17166275&amp;1
+DeviceId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303
+HardwareId - USBSTOR\DiskImation_IronKey_Secure__0303
+FriendlyNameId - Imation IronKey Secure USB Device
+BusId - USBSTOR
+SerialNumberId - 17166275&amp;1
+VID_PID - VID_0718&amp;PID_0688 (This is the "Parent" property in device manager)
+
+###################################################################################################################
+Super Talent USB 3.0 Express RC8
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_STT&amp;PROD_EXPRESS_RC8&amp;REV_0\92134223000000000006&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_STT&amp;PROD_EXPRESS_RC8&amp;REV_0
+HardwareId - USBSTOR\DiskSTT_____EXPRESS_RC8_____0___
+FriendlyNameId - STT EXPRESS RC8 USB Device
+BusId - USBSTOR
+SerialNumberId - 92134223000000000006&amp;0
+VID_PID - USB\VID_1B8F&amp;PID_0307\92134223000000000006 (This is the "Parent" property in device manager)
+
+###################################################################################################################
+SanDisk Cruzer Glide USB Device
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.26\200542560211B4208B1B&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.26
+HardwareId - USBSTOR\DiskSanDisk_Cruzer_Glide____1.26
+FriendlyNameId - SanDisk Cruzer Glide USB Device
+BusId - USBSTOR
+SerialNumberId - 200542560211B4208B1B&amp;0
+VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
+
+###################################################################################################################
+SanDisk Cruzer Glide USB Device - This one will not be placed in allow list so should not work
+###################################################################################################################
+
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.27\2005174013111E218717&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.27
+HardwareId - USBSTOR\DiskSanDisk_Cruzer_Glide____1.27
+FriendlyNameId - SanDisk Cruzer Glide USB Device
+BusId - USBSTOR
+SerialNumberId - 2005174013111E218717&amp;0
+VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
+
+###################################################################################################################
+Create policies, these are your access control policies and apply to the groups above
+###################################################################################################################
+-->
