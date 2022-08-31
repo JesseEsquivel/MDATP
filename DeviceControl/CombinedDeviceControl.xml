@@ -1,5 +1,5 @@
 
-<!--
+<!-- This is a combined device control file, it needs to be split into two xmls, groups and policies
 ###################################################################################################################
 Create Groups these are your block and allow media types and devices
 ###################################################################################################################
@@ -127,8 +127,11 @@ BusId - USBSTOR
 SerialNumberId - 2005174013111E218717&amp;0
 VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
 
+-->
+
+<!--
 ###################################################################################################################
-Create policies, these are your access control policies and apply to the groups above
+Create policies, these are your access control policies and apply to the device control groups
 ###################################################################################################################
 -->
 
