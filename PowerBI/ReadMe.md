@@ -1,1 +1,1 @@
-# PowerBI Templates for MDATP.
+# PowerBI Templates for MDE.
