@@ -1,4 +1,4 @@
-# Windows 10/11 USB Storage Device Control
+# MDE Windows 10/11 USB Storage Device Control
 Policies can be written in xml and applied via GPO or Intune.
 
 - MDE USB storage device control:<br>
