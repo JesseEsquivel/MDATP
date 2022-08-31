@@ -21,7 +21,7 @@ Create Groups these are your block and allow media types and devices
 		<MatchType>MatchAny</MatchType>
 		<DescriptorIdList>
             <!--This is your allow hardware list, add entries for allowed devices here based on the DescriptorIdList property schema-->
-			<InstancePathId>USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*</InstancePathId>
+	    <InstancePathId>USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*</InstancePathId>
             <InstancePathId>SCSI\DISK&amp;VEN_G-TECH&amp;PROD_ARMORATD\6&amp;2054B149&amp;0&amp;*</InstancePathId>
             <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303\17166275&amp;*</InstancePathId>
             <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303\17166275&amp;*</InstancePathId>
