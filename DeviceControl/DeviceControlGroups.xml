@@ -126,7 +126,4 @@ BusId - USBSTOR
 SerialNumberId - 2005174013111E218717&amp;0
 VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
 
-###################################################################################################################
-Create policies, these are your access control policies and apply to the groups above
-###################################################################################################################
 -->
