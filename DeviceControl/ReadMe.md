@@ -88,12 +88,13 @@ BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&amp;0
 VID_PID - "VID_0930&amp;PID_6545"
 ```
-So there you have it in the above table, these are all of hte possible values you can use as a matching identifier in your device control policy.
+So there you have it in the above table, these are all of the possible values you can use as a matching identifier in your device control policy.
 
 ### Groups XML
 Coming soon.
 
 ### Policy XML
+Coming soon.
 
 ### PowerBI Template
 Stay tuned.  😈
