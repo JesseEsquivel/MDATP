@@ -16,6 +16,9 @@ These sample files are for a granular removable storage device control policy:
 
 The scenario is to only allow specic users, with specific USB storage drives, to be used only on specific machines. The xml policy can leverage on premise active directory groups for the authorized users and computers. The most efficient way to handle the assignment of users and devices is to add them to an active directory group and define the group in the xml policy. The sections below will detail the critical parts of the xml and how to configure them.
 
+### Check Prerequisites
+Coming soon.
+
 ### Identifying Removable Devices
 The "[DescriptorIdList]([url](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group))" property defines the attributes that can be used to identify a USB removable storage device. Before embarking on your removable storage device journey it is reccomended to have the drives that you want to explicitly allow and a test machine that you're able to plug them into.
 
@@ -95,6 +98,8 @@ Coming soon.
 
 ### Policy XML
 Coming soon.
+
+### Group Policy Application
 
 ### PowerBI Template
 Stay tuned.  😈
