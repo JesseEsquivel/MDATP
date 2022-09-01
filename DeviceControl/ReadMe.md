@@ -79,14 +79,14 @@ VID_PID - "VID_0930&PID_6545" (This is the "Parent" property in device manager)
 Notice the pretty red above? The & character needs to be escaped in xml like so:
  
 ```xml
-PrimaryId - RemovableMediaDevices<br>
-InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;0<br>
-DeviceId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP<br>
-HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP<br>
-FriendlyNameId - Kingston DataTraveler 2.0 USB Device<br>
-BusId - USBSTOR<br>
-SerialNumberId - C860008861D7EF41CA13157C&amp;0<br>
-VID_PID - "VID_0930&amp;PID_6545" (This is the "Parent" property in device manager)<br>
+PrimaryId - RemovableMediaDevices
+InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;0
+DeviceId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP
+HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP
+FriendlyNameId - Kingston DataTraveler 2.0 USB Device
+BusId - USBSTOR
+SerialNumberId - C860008861D7EF41CA13157C&amp;0
+VID_PID - "VID_0930&amp;PID_6545" (This is the "Parent" property in device manager)
 ```
 So there you have it in the above table, these are all of hte possible values you can use as a matching identifier in your device control policy.
 
