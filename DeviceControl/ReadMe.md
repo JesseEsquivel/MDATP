@@ -46,7 +46,7 @@ HardwareId -
 FriendlyNameId - 
 BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&0
-VID_PID - (This is the "Parent" property in device manager)
+VID_PID - 
 ```
   
 The HardwareId, FriendlyNameId, and VID_PID can be extracted from the device manager, here is the map:
@@ -73,7 +73,7 @@ HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP
 FriendlyNameId - Kingston DataTraveler 2.0 USB Device
 BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&0
-VID_PID - "VID_0930&PID_6545" (This is the "Parent" property in device manager)
+VID_PID - "VID_0930&PID_6545"
 ```
 
 Notice the pretty red above? The & character needs to be escaped in xml like so:
@@ -86,7 +86,7 @@ HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP
 FriendlyNameId - Kingston DataTraveler 2.0 USB Device
 BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&amp;0
-VID_PID - "VID_0930&amp;PID_6545" (This is the "Parent" property in device manager)
+VID_PID - "VID_0930&amp;PID_6545"
 ```
 So there you have it in the above table, these are all of hte possible values you can use as a matching identifier in your device control policy.
 
