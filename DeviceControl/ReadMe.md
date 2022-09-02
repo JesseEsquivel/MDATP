@@ -36,13 +36,6 @@ Copy this value as it will be used to derive the BusId, DeviceId, and the Serial
 
 <br>![image](https://user-images.githubusercontent.com/33558203/187998604-b1027c3c-ba2d-47f9-8cc8-233e3a63cfae.png)<br>
 
-PrimaryId can be one of four values:
-
-- RemovableMediaDevices
-- CdRomDevices
-- WpdDevices
-- PrinterDevices
-
 Extract the BusId, DeviceId, and the SerialnumberId from this value:
 
 ```xml
@@ -55,6 +48,13 @@ BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&0
 VID_PID - 
 ```
+
+PrimaryId can be one of four values:
+
+- RemovableMediaDevices
+- CdRomDevices
+- WpdDevices
+- PrinterDevices
   
 The HardwareId, FriendlyNameId, and VID_PID can be extracted from the device manager, here is the map:
 
