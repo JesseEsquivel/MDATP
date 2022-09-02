@@ -1,5 +1,5 @@
 # MDE Windows 10/11 USB Storage Device Control
-Policies can be written in xml and applied via GPO or Intune. Device control requires an E3 or E5 license to enable it. The license check for E3 is done via Intune, and if deploying GPO the E5 check is to ensure the device is onboarded into Defender for Endpoint. Other MoCAMP prequisites for MDAV platform and engine are available at the link below.
+Policies can be written in xml and applied via GPO or Intune. 
 
 - MDE USB storage device control:<br>
   https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide
@@ -17,7 +17,11 @@ These sample files are for a granular removable storage device control policy:
 The scenario is to only allow specic users, with specific USB storage drives, to be used only on specific machines. The xml policy can leverage on premise active directory groups for the authorized users and computers. The most efficient way to handle the assignment of users and devices is to add them to an active directory group and define the group in the xml policy. The sections below will detail the critical parts of the xml and how to configure them.
 
 ### Check Prerequisites
-Coming soon.
+Device control is dependent on a Defender AV minimum platform version. The floor is platform **4.18.2103.3**. As long as you have this version or later, preferably the most up to date. Check for the platform version using the Get-MpComputerStatus powershell cmdlet:
+
+<br>![image](https://user-images.githubusercontent.com/33558203/188161306-f3565659-4c3b-404c-98c1-413875b84daf.png)<br>
+
+If you don't have this version deploy [KB4052623](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/manage-updates-baselines-microsoft-defender-antivirus?view=o365-worldwide) or run Windows update. Device control also requires an E3 or E5 license to enable it. The license check for E3 is done via Intune, and if deploying via GPO the E5 check is to ensure the device is onboarded into Defender for Endpoint. 
 
 ### Identifying Removable Devices
 The "[DescriptorIdList]([url](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group))" property defines the attributes that can be used to identify a USB removable storage device. Before embarking on your removable storage device journey it is reccomended to have the drives that you want to explicitly allow and a test machine that you're able to plug them into.
@@ -91,7 +95,11 @@ BusId - USBSTOR
 SerialNumberId - C860008861D7EF41CA13157C&amp;0
 VID_PID - "VID_0930&amp;PID_6545"
 ```
-So there you have it in the above table, these are all of the possible values you can use as a matching identifier in your device control policy.
+So there you have it in the above table, these are all of the possible values you can use as a matching identifier in your device control policy. There is one last thing. The very last integer value in the InstancePathId value is the USB slot number, which can change when a device is plugged and unplugged. Therefore a wildcard should be used to accomdate for the potentially variable slot number:
+
+```xml
+InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*
+```
 
 ### Groups XML
 Coming soon.
