@@ -101,8 +101,12 @@ So there you have it in the above table, these are all of the possible values yo
 InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*
 ```
 
-### Groups XML
-The groups xml consists of two groups. The first group blocks any removable storage, CD/DVD, or WPD device. Note the match type of "MatchAny," you will want to use this if you are blocking multiple device type categories. You can also block printers by adding that type here if required. The available properties for the removable storage groups are [here](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group).
+## Groups XML
+The groups xml consists of two groups, broken down below.
+
+### Group 1
+
+The first group blocks any removable storage, CD/DVD, or WPD device. Note the match type of "MatchAny," you will want to use this if you are blocking multiple device type categories. You can also block printers by adding that type here if required. The available properties for the removable storage groups are [here](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group).
 
 ```xml
 <!--Group 1: Block Any removable storage, CD/DVD, or WPD device -->
@@ -116,6 +120,8 @@ The groups xml consists of two groups. The first group blocks any removable stor
 		</DescriptorIdList>
 	</Group>
 ```
+### Group 2
+
 The second group allows approved USB devices based on device property. This is where you will place the attribute values of the approved devices that you gathered above. You can use any property available in the [xml schema](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group) to identify the device. Note the match type of "MatchAny," you'll want to use this if you have multiple approved USB devices. In this example we ran through a couple of USB drives we had, including an Iron Key device.
 
 ```xml
@@ -135,10 +141,88 @@ The second group allows approved USB devices based on device property. This is w
 ```
 Both of these groups should be enclosed in a <Groups></Groups> tag. Save the DeviceControlGroups.xml file to a test machine to do some quick testing.
 
-### Policy XML
-Coming soon.
+## Policy XML
+The policy XML consists of two policy rules as well, broken down below.
+
+### Policy 1
+
+This first policy rule allows and audits write access to approved USBs. This is where you will put the Sids of the active directory groups for the allowed users and computers. Two things to note, the options tag and the AccessMask tag. These are defined in the [access control](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#access-control-policy) section of the XML schema. The Access mask is a bitmask value where you will AND the number for the settings you want. For example the Access mask of **63** below is:
+
+Disk level Access<br>
+	1: Read<br>
+	2: Write<br>
+	4: Execute<br>
+
+File system level access<br>
+	8: File system read<br>
+	16: File system write<br>
+	32: File system execute<br>
+---------------------------<br>
+        63
+
+For the second entry id we're not auditing read actions as this becomes very noisy, hence we are using the bitmask of **54** for the AccessMask value.
+
+```xml
+<!-- Policy 1: Allow/Audit write and execute access to allowed USBs -->
+    <PolicyRule Id="{36ae1037-a639-4cff-946b-b36c53089a4c}">
+        <!-- ./Vendor/MSFT/Defender/Configuration/DeviceControl/PolicyRules/%7b36ae1037-a639-4cff-946b-b36c53089a4c%7d/RuleData -->
+        <Name>Audit write and execute access to approved USBs</Name>
+        <IncludedIdList>
+            <GroupId>{65fa649a-a111-4912-9294-fb6337a25038}</GroupId>
+        </IncludedIdList>
+        <ExcludedIdList></ExcludedIdList>
+        <Entry Id="{a0bcff88-b8e4-4f48-92be-16c36adac930}">
+            <Type>Allow</Type>
+            <Options>0</Options>
+            <AccessMask>63</AccessMask>
+            <Sid>S-1-5-21-4160335514-3859470241-1414062150-3603</Sid><!-- AD user group objectSid attribute value, place users with an ETP in this -->
+            <ComputerSid>S-1-5-21-4160335514-3859470241-1414062150-360</ComputerSid><!-- AD computer group objectSid attribute value, place authorized users computers in this -->
+        </Entry>
+        <Entry Id="{4a17df0b-d89d-430b-9cbe-8e0721192281}">
+            <Type>AuditAllowed</Type>
+            <Options>2</Options>
+            <AccessMask>54</AccessMask>
+        </Entry>
+    </PolicyRule>
+```
+
+### Policy 2
+
+The second policy rule blocks read, write, and execute access and also audits allow access on approved USBs. A few things to note here:
+
+- The IncludedIdList property, this GUID for the GroupId must match the group "Block Any removable storage, CD/DVD, or WPD device" in the groups xml
+- The ExcludedIdList property, thid GUID for the GroupId must match the allow group "Allow Approved USBs based on device properties" in the groupd xml
+- This is your deny policy, and define the level with the AccessMask property. This policy is set to 7 which is deny read, write, execute
+- Define auditing for your deny events, the option of "**3**" is show toast notification and send event, AccessMask for this is also 7 which is read, write, execute
+- The Name property in this policy is **the string that shows up in your toast notification on your endpoints**, customize this accordingly
+
+```xml
+<!--Policy 2: Block read, write, and execute access, and audit but allow approved USBs-->
+        <PolicyRule Id="{c544a991-5786-4402-949e-a032cb790d0e}">
+        <!-- ./Vendor/MSFT/Defender/Configuration/DeviceControl/PolicyRules/%7bc544a991-5786-4402-949e-a032cb790d0e%7d/RuleData -->
+        <Name>"USB removable storage devices"</Name> <!-- This is the string that shows up in your toast notification -->
+        <IncludedIdList>
+            <GroupId>{9b28fae8-72f7-4267-a1a5-685f747a7146}</GroupId><!-- This must match the "Group 1: Block Any removable storage and CD/DVD" in the group xml -->
+        </IncludedIdList>
+        <ExcludedIdList>
+            <GroupId>{65fa649a-a111-4912-9294-fb6337a25038}</GroupId><!-- This must match the "Group 2: Allow Approved USBs based on device properties" in the group xml -->
+        </ExcludedIdList>
+        <Entry Id="{75ff3d3a-e1dd-4fa0-8cdb-72e32a8c5462}">
+            <Type>Deny</Type>
+            <Options>0</Options>
+            <AccessMask>7</AccessMask> <!-- BitMask value of 1: Read, 2: Write, 4: Execute -->
+        </Entry>
+        <Entry Id="{07e22eac-8b01-4778-a567-a8fa6ce18a0c}">
+            <Type>AuditDenied</Type>
+            <Options>3</Options>
+            <AccessMask>7</AccessMask> <!-- BitMask value of 1: Read, 2: Write, 4: Execute -->
+        </Entry>
+    </PolicyRule>
+```
 
 ### Group Policy Application
+To enable device control in group policy configure the following settings with either the local group policy editor, or in a domain based group policy. More coming soon.
+
 
 ### PowerBI Template
 Stay tuned.  😈
