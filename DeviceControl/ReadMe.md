@@ -102,7 +102,38 @@ InstancePathId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV
 ```
 
 ### Groups XML
-Coming soon.
+The groups xml consists of two groups. The first group blocks any removable storage, CD/DVD, or WPD device. Note the match type of "MatchAny," you will want to use this if you are blocking multiple device type categories. You can also block printers by adding that type here if required. The available properties for the removable storage groups are [here](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group).
+
+```xml
+<!--Group 1: Block Any removable storage, CD/DVD, or WPD device -->
+	<Group Id="{9b28fae8-72f7-4267-a1a5-685f747a7146}">
+	  <!-- ./Vendor/MSFT/Defender/Configuration/DeviceControl/PolicyGroups/%7b9b28fae8-72f7-4267-a1a5-685f747a7146%7d/GroupData -->
+		<MatchType>MatchAny</MatchType>
+		<DescriptorIdList>
+			<PrimaryId>RemovableMediaDevices</PrimaryId>
+			<PrimaryId>CdRomDevices</PrimaryId>
+			<PrimaryId>WpdDevices</PrimaryId>
+		</DescriptorIdList>
+	</Group>
+```
+The second group allows approved USB devices based on device property. This is where you will place the attribute values of the approved devices that you gathered above. You can use any property available in the [xml schema](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/device-control-removable-storage-access-control?view=o365-worldwide#removable-storage-group) to identify the device. Note the match type of "MatchAny," you'll want to use this if you have multiple approved USB devices. In this example we ran through a couple of USB drives we had, including an Iron Key device.
+
+```xml
+<!-- Group 2: Allow Approved USBs based on device properties -->
+	<Group Id="{65fa649a-a111-4912-9294-fb6337a25038}">
+		<MatchType>MatchAny</MatchType>
+		<DescriptorIdList>
+            <!--This is your allow hardware list, add entries for allowed devices here based on the DescriptorIdList property schema-->
+	          <InstancePathId>USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP\C860008861D7EF41CA13157C&amp;*</InstancePathId>
+            <InstancePathId>SCSI\DISK&amp;VEN_G-TECH&amp;PROD_ARMORATD\6&amp;2054B149&amp;0&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303\17166275&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303\17166275&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_STT&amp;PROD_EXPRESS_RC8&amp;REV_0\92134223000000000006&amp;*</InstancePathId>
+            <InstancePathId>USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.26\200542560211B4208B1B&amp;*</InstancePathId>
+		</DescriptorIdList>
+	</Group>
+```
+Both of these groups should be enclosed in a <Groups></Groups> tag. Save the DeviceControlGroups.xml file to a test machine to do some quick testing.
 
 ### Policy XML
 Coming soon.
