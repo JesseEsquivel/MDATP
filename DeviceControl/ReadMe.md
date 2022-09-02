@@ -19,7 +19,7 @@ The scenario is to only allow specic users, with specific USB storage drives, to
 ### Check Prerequisites
 Device control is dependent on a Defender AV minimum platform version. The floor is platform **4.18.2103.3**. As long as you have this version or later, preferably the most up to date. Check for the platform version using the Get-MpComputerStatus powershell cmdlet:
 
-<br>![image](https://user-images.githubusercontent.com/33558203/188161306-f3565659-4c3b-404c-98c1-413875b84daf.png)<br>
+<br>![image](https://user-images.githubusercontent.com/33558203/188165129-d6831311-c7a7-4d10-93b0-b9773e8622ec.png)<br>
 
 If you don't have this version deploy [KB4052623](https://docs.microsoft.com/en-us/microsoft-365/security/defender-endpoint/manage-updates-baselines-microsoft-defender-antivirus?view=o365-worldwide) or run Windows update. Device control also requires an E3 or E5 license to enable it. The license check for E3 is done via Intune, and if deploying via GPO the E5 check is to ensure the device is onboarded into Defender for Endpoint. 
 
