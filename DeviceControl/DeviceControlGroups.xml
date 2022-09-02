@@ -49,7 +49,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_KINGSTON&amp;PROD_DATATRAVELER_2.0&amp;REV_PMAP
 HardwareId - USBSTOR\DiskKingstonDataTraveler_2.0PMAP
 FriendlyNameId - Kingston DataTraveler 2.0 USB Device
 BusId - USBSTOR
-SerialNumberId - C860008861D7EF41CA13157C&amp;0
+SerialNumberId - C860008861D7EF41CA13157C
 VID_PID - "VID_0930&amp;PID_6545" (This is the "Parent" property in device manager)
 
 ###################################################################################################################
@@ -75,7 +75,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_PUBLIC&amp;REV_0303
 HardwareId - USBSTOR\DiskImation_IronKey_Public__0303
 FriendlyNameId - Imation IronKey Public USB Device
 BusId - USBSTOR
-SerialNumberId - 17166275&amp;0
+SerialNumberId - 17166275
 VID_PID - VID_0718&amp;PID_0688 (This is the "Parent" property in device manager)
 
 PrimaryId - RemovableMediaDevices
@@ -84,7 +84,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_IMATION&amp;PROD_IRONKEY_SECURE&amp;REV_0303
 HardwareId - USBSTOR\DiskImation_IronKey_Secure__0303
 FriendlyNameId - Imation IronKey Secure USB Device
 BusId - USBSTOR
-SerialNumberId - 17166275&amp;1
+SerialNumberId - 17166275
 VID_PID - VID_0718&amp;PID_0688 (This is the "Parent" property in device manager)
 
 ###################################################################################################################
@@ -97,7 +97,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_STT&amp;PROD_EXPRESS_RC8&amp;REV_0
 HardwareId - USBSTOR\DiskSTT_____EXPRESS_RC8_____0___
 FriendlyNameId - STT EXPRESS RC8 USB Device
 BusId - USBSTOR
-SerialNumberId - 92134223000000000006&amp;0
+SerialNumberId - 92134223000000000006
 VID_PID - USB\VID_1B8F&amp;PID_0307\92134223000000000006 (This is the "Parent" property in device manager)
 
 ###################################################################################################################
@@ -110,7 +110,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.26
 HardwareId - USBSTOR\DiskSanDisk_Cruzer_Glide____1.26
 FriendlyNameId - SanDisk Cruzer Glide USB Device
 BusId - USBSTOR
-SerialNumberId - 200542560211B4208B1B&amp;0
+SerialNumberId - 200542560211B4208B1B
 VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
 
 ###################################################################################################################
@@ -123,7 +123,7 @@ DeviceId - USBSTOR\DISK&amp;VEN_SANDISK&amp;PROD_CRUZER_GLIDE&amp;REV_1.27
 HardwareId - USBSTOR\DiskSanDisk_Cruzer_Glide____1.27
 FriendlyNameId - SanDisk Cruzer Glide USB Device
 BusId - USBSTOR
-SerialNumberId - 2005174013111E218717&amp;0
+SerialNumberId - 2005174013111E218717
 VID_PID - VID_0781&amp;PID_5575 (This is the "Parent" property in device manager)
 
 -->
