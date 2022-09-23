@@ -1,9 +1,3 @@
-<!--
-###################################################################################################################
-Create policies, these are your access control policies and apply to the device control groups
-###################################################################################################################
--->
-
 <PolicyRules>
     <!-- Policy 1: Allow/Audit write and execute access to allowed USBs -->
     <PolicyRule Id="{36ae1037-a639-4cff-946b-b36c53089a4c}">
