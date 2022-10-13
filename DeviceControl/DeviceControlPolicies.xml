@@ -19,6 +19,16 @@
             <Options>2</Options>
             <AccessMask>54</AccessMask>
         </Entry>
+            <Entry Id="{b35d3edb-ea8b-4304-b09a-77e937a6cad8}">
+            <Type>Deny</Type>
+            <Options>0</Options>
+            <AccessMask>7</AccessMask> <!-- BitMask value of 1: Read, 2: Write, 4: Execute -->
+        </Entry>
+        <Entry Id="{d068b32c-835a-475f-bc25-be32654fd075}">
+            <Type>AuditDenied</Type>
+            <Options>3</Options>
+            <AccessMask>7</AccessMask> <!-- BitMask value of 1: Read, 2: Write, 4: Execute -->
+        </Entry>
     </PolicyRule>
     
     <!--Policy 2: Block read, write, and execute access, and audit but allow approved USBs-->
