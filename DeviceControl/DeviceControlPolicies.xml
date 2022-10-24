@@ -14,6 +14,12 @@
             <Sid>S-1-5-21-4160335514-3859470241-1414062150-3603</Sid><!-- AD user group objectSid attribute value, place users with an ETP in this -->
             <ComputerSid>S-1-5-21-4160335514-3859470241-1414062150-360</ComputerSid><!-- AD computer group objectSid attribute value, place authorized users computers in this -->
         </Entry>
+        <Entry Id="{a0bcff88-b8e4-4f48-92be-16c36adac930}">
+            <Type>Allow</Type>
+            <Options>0</Options>
+            <AccessMask>9</AccessMask>
+            <Sid>S-1-5-21-4160335514-3859470241-1414062150-3603</Sid><!-- AD user group objectSid attribute value, place users with an ETP Read in this -->
+        </Entry>
         <Entry Id="{4a17df0b-d89d-430b-9cbe-8e0721192281}">
             <Type>AuditAllowed</Type>
             <Options>2</Options>
