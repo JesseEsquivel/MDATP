@@ -1,5 +1,5 @@
 # Microsoft Windows Defender Application Control
-Here are a few things acquired while testing and developing MDAC for non-persistent VDI!
+Here are a few things acquired while testing and developing WDAC for physical machines and for non-persistent VDI!
 
 # Java
 Some customers still use the Java ActiveX control add-in in Internet Explorer.  When you create an MDAC CI policy, sites that use the control stop working.  It was my experience that you need to whitelist the control, and the binaries to allow the sites to function.  Whitelisting the Java ActiveX control requires a couple of things.  I will step through them here.  First the Java controls must be whitelisted via COM object registration by adding the following section to the MDAC xml policy that is generated:
