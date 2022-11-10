@@ -1,7 +1,7 @@
 <#
 ##################################################################################################################
 #
-# Microsoft Premier Field Engineering
+# Microsoft Customer Experience Engineering
 # jesse.esquivel@microsoft.com
 # Create-CIPolicy.ps1
 # Create MDAC CI Policy
