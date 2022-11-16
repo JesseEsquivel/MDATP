@@ -36,7 +36,6 @@
 
 Function Check-MDE($Platform, $Engine)
 {
-    $date = Get-Date -Format "yyMM"
     $result = Get-MpComputerStatus | select AMRunningMode,AMEngineVersion,AMProductVersion,AntispywareSignatureLastUpdated
     $return = [pscustomobject]@{
         isMDEReady = ([version]$($result.AMEngineVersion) -ge $Engine)`
