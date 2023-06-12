@@ -1,8 +1,8 @@
 # :cat: Microsoft Defender Endpoint Protection Platform :cat:
-Scripts for the EPP side of MDE.  DefenderEPP.ps1 can be used to configure a machine for an MDE evaluation/assessment.
+Scripts for the EPP side of MDE.
 
 # Configure using DefenderEPP.ps1
-Script to quickly prepare/configure an endpoint for MDE evaluation/assessment. 
+Script to quickly prepare/configure an endpoint for MDE evaluation/assessment.
 
 ![image](https://github.com/JesseEsquivel/MDATP/assets/33558203/c1848da6-b532-46ee-8bd0-cbcb0ec8bc57)
 
