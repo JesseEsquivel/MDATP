@@ -1612,6 +1612,90 @@ function EPP-Defaults()
     }
 }
 
+function EPP-Allow()
+{
+    Write-Host
+    Write-Host "##########################################################################" -ForegroundColor White
+    Write-Host "Configuring Defender for EDR only alerting" -ForegroundColor Magenta
+    Write-Host "##########################################################################" -ForegroundColor White
+    Write-Host
+
+    try
+    {
+   
+        #Defender AV Engine
+        Write-Host "Disabling Behavior Monitoring..." -ForegroundColor Cyan
+        Set-MpPreference -DisableBehaviorMonitoring $true
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Disabling IOAV Protection..." -ForegroundColor Cyan
+        Set-MpPreference -DisableIOAVProtection $true
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Disabling Email Scanning..." -ForegroundColor Cyan
+        Set-MpPreference -DisableEmailScanning $true
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Disabling RealTime Monitoring..." -ForegroundColor Cyan
+        Set-MpPreference -DisableRealtimeMonitoring $true
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Disabling Script Scanning..." -ForegroundColor Cyan
+        Set-MpPreference -DisableScriptScanning $true
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        #Set-MpPreference DisableInboundConnectionFiltering $true
+    }
+    catch
+    {
+        Write-Host "Failed to configure EPP Allow settings" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        closeScript 1
+    }
+}
+
+function EPP-AllowRevert()
+{
+    Write-Host
+    Write-Host "##########################################################################" -ForegroundColor White
+    Write-Host "Configuring Defender, reverting EDR only alerting" -ForegroundColor Magenta
+    Write-Host "##########################################################################" -ForegroundColor White
+    Write-Host
+
+    try
+    {
+   
+        #Defender AV Engine
+        Write-Host "Enabling Behavior Monitoring..." -ForegroundColor Cyan
+        Set-MpPreference -DisableBehaviorMonitoring $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Enabling IOAV Protection..." -ForegroundColor Cyan
+        Set-MpPreference -DisableIOAVProtection $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Enabling Email Scanning..." -ForegroundColor Cyan
+        Set-MpPreference -DisableEmailScanning $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Enabling RealTime Monitoring..." -ForegroundColor Cyan
+        Set-MpPreference -DisableRealtimeMonitoring $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Enabling Script Scanning..." -ForegroundColor Cyan
+        Set-MpPreference -DisableScriptScanning $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        #Set-MpPreference DisableInboundConnectionFiltering $true
+    }
+    catch
+    {
+        Write-Host "Failed to revert EPP Allow settings" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        closeScript 1
+    }
+}
+
 function Remove-AVExclusions()
 {
     $AV = Get-MpPreference
@@ -1830,6 +1914,14 @@ function Menu()
             5 
             {Remove-AVExclusions
             pause}
+            6
+            {EPP-Allow
+            pause
+            }
+            7
+            {EPP-AllowRevert
+            pause
+            }
             Q 
             {Exit}   
             default
