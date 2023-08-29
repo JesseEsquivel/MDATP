@@ -1644,6 +1644,10 @@ function EPP-Allow()
         Set-MpPreference -DisableScriptScanning $true
         Write-Host "Success." -ForegroundColor Green
         Write-Host
+        Write-Host "Disabling SubmitSamplesConsent..." -ForegroundColor Cyan
+        Set-MpPreference -SubmitSamplesConsent 2
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
         #Set-MpPreference DisableInboundConnectionFiltering $true
     }
     catch
@@ -1684,6 +1688,10 @@ function EPP-AllowRevert()
         Write-Host
         Write-Host "Enabling Script Scanning..." -ForegroundColor Cyan
         Set-MpPreference -DisableScriptScanning $false
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Enabling SubmitSamplesConsent..." -ForegroundColor Cyan
+        Set-MpPreference -SubmitSamplesConsent 1
         Write-Host "Success." -ForegroundColor Green
         Write-Host
         #Set-MpPreference DisableInboundConnectionFiltering $true
