@@ -1391,7 +1391,7 @@ function EPP-Harden()
         if((Get-WMIObject win32_operatingsystem).Name -Like "*Server*" -or (Get-WMIObject win32_operatingsystem).Name -Like "*MultiSession*")
         {
             Write-Host "Server or AVD found...setting AllowNetworkProtectionOnWinServer to 1..." -ForegroundColor Cyan
-            Set-MpPreference AllowNetworkProtectionOnWinServer 1
+            Set-MpPreference -AllowNetworkProtectionOnWinServer 1
             Write-Host "Success." -ForegroundColor Green
             Write-Host
             Write-Host "Server or AVD found...setting AllowDatagramProcessingOnWinServer to 1..." -ForegroundColor Cyan
@@ -1432,7 +1432,7 @@ function EPP-Harden()
         Add-MpPreference -AttackSurfaceReductionRules_Ids 01443614-cd74-433a-b99e-2ecdc07bfc25 -AttackSurfaceReductionRules_Actions AuditMode
         Write-Host "Success." -ForegroundColor Green
         Write-Host
-        Write-Host "Setting ASR Rule `"BBlock JavaScript or VBScript from launching downloaded executable content`" to Block mode..." -ForegroundColor Cyan
+        Write-Host "Setting ASR Rule `"Block JavaScript or VBScript from launching downloaded executable content`" to Block mode..." -ForegroundColor Cyan
         Add-MpPreference -AttackSurfaceReductionRules_Ids d3e037e1-3eb8-44c8-a917-57927947596d -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
@@ -1466,6 +1466,10 @@ function EPP-Harden()
         Write-Host
         Write-Host "Setting ASR Rule `"Use advanced protection against ransomware`" to Block mode..." -ForegroundColor Cyan
         Add-MpPreference -AttackSurfaceReductionRules_Ids c1db55ab-c21a-4637-bb3f-a12568109d35 -AttackSurfaceReductionRules_Actions Enabled
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Setting ASR Rule `"Block execution of potentially obfuscated scripts`" to Block mode..." -ForegroundColor Cyan
+        Add-MpPreference -AttackSurfaceReductionRules_Ids 5beb7efe-fd9a-4556-801d-275e5ffc04cc -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
         Write-Host "##########################################################################" -ForegroundColor White
@@ -1522,7 +1526,7 @@ function EPP-Defaults()
         if((Get-WMIObject win32_operatingsystem).Name -Like "*Server*" -or (Get-WMIObject win32_operatingsystem).Name -Like "*MultiSession*")
         {
             Write-Host "Server or AVD found...setting AllowNetworkProtectionOnWinServer to 0..." -ForegroundColor Cyan
-            Set-MpPreference AllowNetworkProtectionOnWinServer 0
+            Set-MpPreference -AllowNetworkProtectionOnWinServer 0
             Write-Host "Success." -ForegroundColor Green
             Write-Host
             Write-Host "Server or AVD found...setting AllowDatagramProcessingOnWinServer to 0..." -ForegroundColor Cyan
@@ -1597,6 +1601,10 @@ function EPP-Defaults()
         Write-Host
         Write-Host "Setting ASR Rule `"Use advanced protection against ransomware`" to Disabled..." -ForegroundColor Cyan
         Add-MpPreference -AttackSurfaceReductionRules_Ids c1db55ab-c21a-4637-bb3f-a12568109d35 -AttackSurfaceReductionRules_Actions Disabled
+        Write-Host "Success." -ForegroundColor Green
+        Write-Host
+        Write-Host "Setting ASR Rule `"Block execution of potentially obfuscated scripts`" to Disabled..." -ForegroundColor Cyan
+        Add-MpPreference -AttackSurfaceReductionRules_Ids 5beb7efe-fd9a-4556-801d-275e5ffc04cc -AttackSurfaceReductionRules_Actions Disabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
         Write-Host "##########################################################################" -ForegroundColor White
