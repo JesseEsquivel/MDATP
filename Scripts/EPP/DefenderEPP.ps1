@@ -1428,8 +1428,8 @@ function EPP-Harden()
         Add-MpPreference -AttackSurfaceReductionRules_Ids be9ba2d9-53ea-4cdc-84e5-9b1eeee46550 -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
-        Write-Host "Setting ASR Rule `"Block executable files from running unless they meet a prevalence, age, or trusted list criterion`" to Audit mode..." -ForegroundColor Cyan
-        Add-MpPreference -AttackSurfaceReductionRules_Ids 01443614-cd74-433a-b99e-2ecdc07bfc25 -AttackSurfaceReductionRules_Actions AuditMode
+        Write-Host "Setting ASR Rule `"Block executable files from running unless they meet a prevalence, age, or trusted list criterion`" to Block mode..." -ForegroundColor Cyan
+        Add-MpPreference -AttackSurfaceReductionRules_Ids 01443614-cd74-433a-b99e-2ecdc07bfc25 -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
         Write-Host "Setting ASR Rule `"Block JavaScript or VBScript from launching downloaded executable content`" to Block mode..." -ForegroundColor Cyan
@@ -1452,8 +1452,8 @@ function EPP-Harden()
         Add-MpPreference -AttackSurfaceReductionRules_Ids e6db77e5-3df2-4cf1-b95a-636979351e5b -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
-        Write-Host "Setting ASR Rule `"Block process creations originating from PSExec and WMI commands`" to Audit mode..." -ForegroundColor Cyan
-        Add-MpPreference -AttackSurfaceReductionRules_Ids d1e49aac-8f56-4280-b9ba-993a6d77406c -AttackSurfaceReductionRules_Actions AuditMode
+        Write-Host "Setting ASR Rule `"Block process creations originating from PSExec and WMI commands`" to Block mode..." -ForegroundColor Cyan
+        Add-MpPreference -AttackSurfaceReductionRules_Ids d1e49aac-8f56-4280-b9ba-993a6d77406c -AttackSurfaceReductionRules_Actions Enabled
         Write-Host "Success." -ForegroundColor Green
         Write-Host
         Write-Host "Setting ASR Rule `"Block untrusted and unsigned processes that run from USB`" to Block mode..." -ForegroundColor Cyan
