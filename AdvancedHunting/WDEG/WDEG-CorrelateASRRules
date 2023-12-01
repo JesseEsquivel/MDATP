@@ -1,0 +1,58 @@
+// Correlate ASR rule name, ActionType, and Ruleguid for ASR rules
+// jesse.esquivel@microsoft.com
+DeviceEvents
+| where ActionType startswith "ASR"
+//| where ActionType has "Blocked"
+| extend RuleGuid = tolower(tostring(parsejson(AdditionalFields).RuleId))
+| extend ASRRuleName = case(
+    ActionType == 'AsrPsexecWmiChildProcessAudited', 'Block process creations originating from PSExec and WMI commands',
+    ActionType == 'AsrPsexecWmiChildProcessBlocked', 'Block process creations originating from PSExec and WMI commands',
+    ActionType == 'AsrPsexecWmiChildProcessWarnBypassed', 'Block process creations originating from PSExec and WMI commands',
+    ActionType == 'AsrAdobeReaderChildProcessAudited', 'Block Adobe Reader from creating child processes',
+    ActionType == 'AsrAdobeReaderChildProcessBlocked', 'Block Adobe Reader from creating child processes',
+    ActionType == 'AsrAdobeReaderChildProcessWarnBypassed', 'Block Adobe Reader from creating child processes',
+    ActionType == 'AsrExecutableEmailContentAudited', 'Block executable content from email client and webmail',
+    ActionType == 'AsrExecutableEmailContentBlocked', 'Block executable content from email client and webmail',
+    ActionType == 'AsrExecutableEmailContentWarnBypassed', 'Block executable content from email client and webmail',
+    ActionType == 'AsrExecutableOfficeContentAudited', 'Block Office applications from creating executable content',
+    ActionType == 'AsrExecutableOfficeContentBlocked', 'Block Office applications from creating executable content',
+    ActionType == 'AsrExecutableOfficeContentWarnBypassed', 'Block Office applications from creating executable content',
+    ActionType == 'AsrLsassCredentialTheftAudited', 'Block credential stealing from the Windows local security authority subsystem (lsass.exe)',
+    ActionType == 'AsrLsassCredentialTheftBlocked', 'Block credential stealing from the Windows local security authority subsystem (lsass.exe)',
+    ActionType == 'AsrLsassCredentialTheftWarnBypassed', 'Block credential stealing from the Windows local security authority subsystem (lsass.exe)',
+    ActionType == 'AsrObfuscatedScriptAudited', 'Block execution of potentially obfuscated scripts',
+    ActionType == 'AsrObfuscatedScriptBlocked', 'Block execution of potentially obfuscated scripts',
+    ActionType == 'AsrObfuscatedScriptWarnBypassed', 'Block execution of potentially obfuscated scripts',
+    ActionType == 'AsrOfficeChildProcessAudited', 'Block all Office applications from creating child processes',
+    ActionType == 'AsrOfficeChildProcessBlocked', 'Block all Office applications from creating child processes',
+    ActionType == 'AsrOfficeChildProcessWarnBypassed', 'Block all Office applications from creating child processes',
+    ActionType == 'AsrOfficeCommAppChildProcessAudited', 'Process creation from Office communication products (beta)',
+    ActionType == 'AsrOfficeCommAppChildProcessBlocked', 'Process creation from Office communication products (beta)',
+    ActionType == 'AsrOfficeCommAppChildProcessWarnBypassed', 'Process creation from Office communication products (beta)',
+    ActionType == 'AsrOfficeMacroWin32ApiCallsAudited', 'Block Win32 API calls from Office macros',
+    ActionType == 'AsrOfficeMacroWin32ApiCallsBlocked', 'Block Win32 API calls from Office macros',
+    ActionType == 'AsrOfficeMacroWin32ApiCallsWarnBypassed', 'Block Win32 API calls from Office macros',
+    ActionType == 'AsrOfficeProcessInjectionAudited', 'Block Office applications from injecting code into other processes',
+    ActionType == 'AsrOfficeProcessInjectionBlocked', 'Block Office applications from injecting code into other processes',
+    ActionType == 'AsrOfficeProcessInjectionWarnBypassed', 'Block Office applications from injecting code into other processes',
+    ActionType == 'AsrPersistenceThroughWmiAudited', 'Block persistence through WMI event subscription',
+    ActionType == 'AsrPersistenceThroughWmiBlocked', 'Block persistence through WMI event subscription',
+    ActionType == 'AsrPersistenceThroughWmiWarnBypassed', 'Block persistence through WMI event subscription',
+    ActionType == 'AsrRansomwareAudited', 'Use advanced protection against ransomware',
+    ActionType == 'AsrRansomwareBlocked', 'Use advanced protection against ransomware',
+    ActionType == 'AsrRansomwareWarnBypassed', 'Use advanced protection against ransomware',
+    ActionType == 'AsrScriptExecutableDownloadAudited', 'Block JavaScript or VBScript from launching downloaded executable content',
+    ActionType == 'AsrScriptExecutableDownloadBlocked', 'Block JavaScript or VBScript from launching downloaded executable content',
+    ActionType == 'AsrScriptExecutableDownloadWarnBypassed', 'Block JavaScript or VBScript from launching downloaded executable content',
+    ActionType == 'AsrUntrustedExecutableAudited', 'Block executable files from running unless they meet a prevalence, age, or trusted list criteria',
+    ActionType == 'AsrUntrustedExecutableBlocked', 'Block executable files from running unless they meet a prevalence, age, or trusted list criteria',
+    ActionType == 'AsrUntrustedExecutableWarnBypassed', 'Block executable files from running unless they meet a prevalence, age, or trusted list criteria',
+    ActionType == 'AsrUntrustedUsbProcessAudited', 'Block untrusted and unsigned processes that run from USB',
+    ActionType == 'AsrUntrustedUsbProcessBlocked', 'Block untrusted and unsigned processes that run from USB',
+    ActionType == 'AsrUntrustedUsbProcessWarnBypassed', 'Block untrusted and unsigned processes that run from USB',
+    ActionType == 'AsrVulnerableSignedDriverAudited', "Block abuse of exploited vulnerable signed drivers",
+    ActionType == 'AsrVulnerableSignedDriverBlocked', "Block abuse of exploited vulnerable signed drivers",
+    ActionType == 'AsrVulnerableSignedDriverWarnBypassed', "Block abuse of exploited vulnerable signed drivers",
+    "UNKNOWN")
+| summarize Events = count() by ASRRuleName, RuleGuid, ActionType
+| sort by Events desc
