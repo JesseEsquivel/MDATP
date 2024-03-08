@@ -70,6 +70,11 @@ Function Activate-Policy($xml, $cip)
     [xml]$sourceXml = Get-Content $xml
     Rename-Item $cip -NewName "$($sourceXml.SiPolicy.PolicyID).cip"
 }
+function Remove-NonSuppRules($xml)
+{
+    @(0, 1, 2, 3, 4, 8, 9, 10, 11, 12, 15, 16, 17, 19, 20) | ForEach-Object {
+    Set-RuleOption -FilePath $xml -Option $_ -Delete }
+}
 
 ##################################################################################################################
 # Begin Script  - please do not change unless you know what you are doing
@@ -86,9 +91,9 @@ Write-Host
 #create new 1903+ base CI-Policy in audit mode and stop/disable VSS service
 try
 {
-    #New-CIPolicy -MultiplePolicyFormat -Level "FilePublisher" -SpecificFileNameLevel ProductName -FilePath "$scriptDir\InitialScan.xml" -Fallback "Hash" -UserPEs 3> "C:\Windows\Temp\CIPolicy.log" -ErrorAction Stop -OmitPaths "-OmitPaths c:\Windows,'C:\Program Files\WindowsApps\',c:\windows.old\"
     Write-Host "Creating WDAC base policy..." -ForegroundColor Cyan
-    New-CIPolicy -MultiplePolicyFormat -Level "Publisher" -FilePath "$scriptDir\InitialScan.xml" -Fallback "Hash" -UserPEs -OmitPaths 'C:\Windows\','C:\Program Files\WindowsApps\','c:\windows.old\' -ErrorAction Stop #3> "C:\Windows\Temp\CIPolicy.log"
+    New-CIPolicy -MultiplePolicyFormat -Level "FilePublisher" -SpecificFileNameLevel ProductName -FilePath "$scriptDir\InitialScan.xml" -Fallback "Hash" -UserPEs -OmitPaths "-OmitPaths c:\Windows,'C:\Program Files\WindowsApps\',c:\windows.old\" -ErrorAction Stop
+    #New-CIPolicy -MultiplePolicyFormat -Level "Publisher" -FilePath "$scriptDir\InitialScan.xml" -Fallback "Hash" -UserPEs -OmitPaths 'C:\Windows\','C:\Program Files\WindowsApps\','c:\windows.old\' -ErrorAction Stop #3> "C:\Windows\Temp\CIPolicy.log"
     Write-Host "Success." -ForegroundColor Green
     Write-Host
 }
@@ -101,15 +106,15 @@ catch
 #merge CI-Policy with Microsoft windows default policy, convert to binary, configure, and cleanup
 try
 {
-    #merge and convert CI Policy for default Windows Allow
+    #merge and convert CI Policy for default Windows enforced if required
     Write-Host "Merging base policy and default Windows enforced policy..." -ForegroundColor Cyan
-    Merge-CIPolicy -PolicyPaths "$scriptDir\InitialScan.xml","C:\Windows\schemas\CodeIntegrity\ExamplePolicies\DefaultWindows_Enforced.xml" -OutputFilePath "$scriptDir\$org-CI-Policy.xml" | Out-Null
+    Merge-CIPolicy -PolicyPaths "$scriptDir\InitialScan.xml","C:\Windows\schemas\CodeIntegrity\ExamplePolicies\DefaultWindows_Audit.xml" -OutputFilePath "$scriptDir\$org-CI-Policy.xml" | Out-Null
     Write-Host "Success." -ForegroundColor Green
     Write-Host
     
     #remove audit mode rule, make supplementable, etc.
     Write-Host "Configuring WDAC base policy options..." -ForegroundColor Cyan
-    Set-RuleOption -FilePath "$scriptDir\$org-CI-Policy.xml" -Option 3 -Delete -Verbose #3 Enabled:Audit Mode (Default)
+    #Set-RuleOption -FilePath "$scriptDir\$org-CI-Policy.xml" -Option 3 -Delete -Verbose #3 Enabled:Audit Mode (Default)
     Set-RuleOption -FilePath "$scriptDir\$org-CI-Policy.xml" -Option 17 -Verbose #17 Enabled:Allow Supplemental Policies
     Set-RuleOption -FilePath "$scriptDir\$org-CI-Policy.xml" -Option 10 -Verbose #10 Enabled:Boot Audit on Failure
     Set-RuleOption -FilePath "$scriptDir\$org-CI-Policy.xml" -Option 11 -Verbose #11 Disabled:Script Enforcement
@@ -130,24 +135,28 @@ catch
     closeScript 1
 }
 
+<#
 Write-Host "*************************************************************************************" -ForegroundColor White
-Write-Host "Phase 2 - Create additional reccomended block policies..." -ForegroundColor White
+Write-Host "Phase 2 - Create additional policies..." -ForegroundColor White
 Write-Host "*************************************************************************************" -ForegroundColor White
 Write-Host
 
 try
 {
-    <#
-    create supplemental file path based rules policy
-    $rules = New-CIPolicyRule -FilePathRule "C:\Program Files (x86)\Java\*"
+    #Use WDAC wizard to parse MDE Advanced hunting audit events to create supplemental policy OR
+    #create supplemental file path based rules policy
+    $Rule_1 = New-CIPolicyRule -FilePathRule "C:\Program Files (x86)\Java\*"
+    $Rule_2 = New-CIPolicyRule -FilePathRule "C:\Temp"
+    $Rules += $Rule_1 + $Rule_2
     New-CIPolicy -FilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -Rules $rules -UserPEs
-    Set-RuleOption -FilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -Option 3 -Delete
+    Set-RuleOption -FilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -Option 13 -Verbose #13 Enabled:Managed Installer
+    #Set-RuleOption -FilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -Option 3 -Delete -verbose #3 Enabled:Audit Mode (Default)
     Set-CIPolicyIdInfo -FilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -BasePolicyToSupplementPath "$scriptDir\$org-CI-Policy.xml"
     ConvertFrom-CIPolicy -XmlFilePath "$scriptDir\$org-FilePath-CI-Policy.xml" -BinaryFilePath "$scriptDir\$org-FilePath-CI-Policy.cip"
-    Move-Item -Path "$scriptDir\$org-FilePath-CI-Policy.cip" -Destination "C:\Windows\System32\CodeIntegrity\CiPolicies\Active\$org-FilePath-CI-Policy.cip"
-    #>
+    Write-Host "Success." -ForegroundColor Green
+    Write-Host
 
-    #create supplemental reccomended block rules policy
+    #create supplemental reccomended block rules base policy
     Write-Host "Creating Microsoft Reccomended Block Rules policy and converting to binary..." -ForegroundColor Cyan
     Set-CIPolicyIdInfo -FilePath "$scriptDir\MicrosoftReccomendedBlockRules.xml" -ResetPolicyID | Out-Null
     Set-RuleOption -FilePath "$scriptDir\MicrosoftReccomendedBlockRules.xml" -Option 3 -Delete -Verbose #3 Enabled:Audit Mode (Default)
@@ -155,22 +164,23 @@ try
     Write-Host "Success." -ForegroundColor Green
     Write-Host
     
-    #create supplemental reccoemended driver block rules policy
+    #create s reccomended driver block rules base policy
     Write-Host "Creating Microsoft Reccomended Driver Block Rules policy and converting to binary..." -ForegroundColor Cyan
     Set-CIPolicyIdInfo -FilePath "$scriptDir\MicrosoftReccomendedDriverBlockRules.xml" -ResetPolicyID | Out-Null
     ConvertFrom-CIPolicy -XmlFilePath "$scriptDir\MicrosoftReccomendedDriverBlockRules.xml" -BinaryFilePath "$scriptDir\$org-ReccomendedDriverBlockRules-CI-Policy.cip" | Out-Null
     Write-Host "Success." -ForegroundColor Green
     Write-Host
+
 }
 catch
 {
     Write-Host "A fatal exception occurred: $($_.Exception.Message)"
     closeScript 1
 }
+#>
 
 #rename policy files with PolicyID attribute value for activation
 Activate-Policy "$scriptDir\$org-CI-Policy.xml" "$scriptDir\$org-CI-Policy.cip"
-Activate-Policy "$scriptDir\MicrosoftReccomendedBlockRules.xml" "$scriptDir\$org-ReccomendedBlockRules-CI-Policy.cip"
-Activate-Policy "$scriptDir\MicrosoftReccomendedDriverBlockRules.xml" "$scriptDir\$org-ReccomendedDriverBlockRules-CI-Policy.cip"
+#Activate-Policy "$scriptDir\$org-FilePath-CI-Policy.xml" "$scriptDir\$org-FilePath-CI-Policy.cip"
 
 closeScript 0 
