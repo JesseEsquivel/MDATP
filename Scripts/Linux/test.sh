@@ -1,3 +1,4 @@
+#!/bin/bash
 checkFiles() {
 #find onboarding zip and unzip
 currentDir=$(pwd)
