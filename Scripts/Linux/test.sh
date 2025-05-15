@@ -1,7 +1,3 @@
-#!/bin/bash
-#RHEL Linux setup script 
-##################################################################################################################
-
 checkFiles() {
 echo -e "\e[36m##################################################################################################\e[0m"
 echo -e "\e[36mPerforming pre-req checks to ensure all files are present for onboarding...\e[0m" 
@@ -62,21 +58,8 @@ fi
 #check for mdatp_managed.json
 managedFile="mdatp_managed.json"
 managedPath="$currentDir/$managedFile"
-echo -e "\e[36mChecking that ${managedFile} file is present and valid...\e[0m"
+echo -e "\e[36mChecking that ${managedFile} file is present and contains required values...\e[0m"
 if [ -f "$managedPath" ]; then
-    # Basic JSON syntax validation
-    openBraces=$(grep -o "{" "$managedPath" | wc -l)
-    closeBraces=$(grep -o "}" "$managedPath" | wc -l)
-    quoteCount=$(grep -o '"' "$managedPath" | wc -l)
-    
-    if ! tr -d '[:space:]' < "$managedPath" | grep -q '^{.*}$' || \
-       [ "$openBraces" != "$closeBraces" ] || \
-       [ $((quoteCount % 2)) -ne 0 ]; then
-        echo -e "\e[31mMdatp Managed json file has invalid syntax! Please verify file format, exiting...\e[0m"
-        echo
-        exit 1
-    fi
-    
     # Check required JSON values
     if ! grep -q '"pinCertificateThumbs": true' "$managedPath" || \
        ! grep -q '"manageEngineInPassiveMode": "disabled"' "$managedPath"; then
@@ -92,3 +75,5 @@ else
     exit 1
 fi
 }
+
+checkFiles
