@@ -1,4 +1,6 @@
 #!/bin/bash
+#RHEL Linux setup script 
+##################################################################################################################
 
 checkFiles() {
 echo -e "\e[36m##################################################################################################\e[0m"
@@ -64,7 +66,9 @@ echo -e "\e[36mChecking that ${managedFile} file is present and contains require
 if [ -f "$managedPath" ]; then
     # Check required JSON values
     if ! grep -q '"pinCertificateThumbs": true' "$managedPath" || \
-       ! grep -q '"manageEngineInPassiveMode": "disabled"' "$managedPath"; then
+	   ! grep -q '"pinCertificateThumbs":true' "$managedPath" || \
+	   ! grep -q '"manageEngineInPassiveMode": "disabled"' "$managedPath" || \
+       ! grep -q '"manageEngineInPassiveMode":"disabled"' "$managedPath"; then
         echo -e "\e[31mMdatp Managed json file missing required values! Please verify file contents, exiting...\e[0m"
 		echo
         exit 1
