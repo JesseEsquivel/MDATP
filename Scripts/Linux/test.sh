@@ -65,9 +65,7 @@ managedPath="$currentDir/$managedFile"
 echo -e "\e[36mChecking that ${managedFile} file is present and contains required values...\e[0m"
 if [ -f "$managedPath" ]; then
     # Check required JSON values
-    if ! grep -q '"pinCertificateThumbs": true' "$managedPath" || \
-	   ! grep -q '"pinCertificateThumbs":true' "$managedPath" || \
-	   ! grep -q '"manageEngineInPassiveMode": "disabled"' "$managedPath" || \
+    if ! grep -q '"pinCertificateThumbs":true' "$managedPath" || \
        ! grep -q '"manageEngineInPassiveMode":"disabled"' "$managedPath"; then
         echo -e "\e[31mMdatp Managed json file missing required values! Please verify file contents, exiting...\e[0m"
 		echo
