@@ -65,9 +65,13 @@ managedPath="$currentDir/$managedFile"
 echo -e "\e[36mChecking that ${managedFile} file is present and valid...\e[0m"
 if [ -f "$managedPath" ]; then
     # Basic JSON syntax validation
+    openBraces=$(grep -o "{" "$managedPath" | wc -l)
+    closeBraces=$(grep -o "}" "$managedPath" | wc -l)
+    quoteCount=$(grep -o '"' "$managedPath" | wc -l)
+    
     if ! tr -d '[:space:]' < "$managedPath" | grep -q '^{.*}$' || \
-       [ $(grep -o '{' "$managedPath" | wc -l) != $(grep -o '}' "$managedPath" | wc -l) ] || \
-       [ $(grep -o '"' "$managedPath" | wc -l) % 2 -ne 0 ]; then
+       [ "$openBraces" != "$closeBraces" ] || \
+       [ $((quoteCount % 2)) -ne 0 ]; then
         echo -e "\e[31mMdatp Managed json file has invalid syntax! Please verify file format, exiting...\e[0m"
         echo
         exit 1
@@ -88,5 +92,3 @@ else
     exit 1
 fi
 }
-
-checkFiles
