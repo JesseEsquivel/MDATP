@@ -1,56 +1,4 @@
-validateJson() {
-    local jsonFile="$1"
-    
-    # Check if file exists
-    if [ ! -f "$jsonFile" ]; then
-        echo -e "\e[31mError: File $jsonFile not found\e[0m"
-        return 1
-    fi
-
-    # Check basic JSON structure
-    if ! tr -d '[:space:]' < "$jsonFile" | grep -q '^{.*}$'; then
-        echo -e "\e[31mError: Invalid JSON - must start with { and end with }\e[0m"
-        return 1
-    fi
-
-    # Count braces and quotes
-    local openBraces=$(grep -o "{" "$jsonFile" | wc -l)
-    local closeBraces=$(grep -o "}" "$jsonFile" | wc -l)
-    local quoteCount=$(grep -o '"' "$jsonFile" | wc -l)
-
-    # Validate matching braces
-    if [ "$openBraces" != "$closeBraces" ]; then
-        echo -e "\e[31mError: Mismatched braces - found $openBraces open and $closeBraces close braces\e[0m"
-        return 1
-    fi
-
-    # Validate quote pairs
-    if [ $((quoteCount % 2)) -ne 0 ]; then
-        echo -e "\e[31mError: Unpaired quotes - found $quoteCount quotes\e[0m"
-        return 1
-    fi
-
-    # Check for invalid trailing commas
-    if grep -q ',[ \t]*[}\]]' "$jsonFile"; then
-        echo -e "\e[31mError: Invalid trailing commas found before } or ]\e[0m"
-        return 1
-    fi
-
-    # Check for missing commas between elements
-    if grep -q '"[ \t]*"' "$jsonFile"; then
-        echo -e "\e[31mError: Missing comma between JSON elements\e[0m"
-        return 1
-    fi
-
-    # Check for multiple consecutive commas
-    if grep -q ',[ \t]*,' "$jsonFile"; then
-        echo -e "\e[31mError: Multiple consecutive commas found\e[0m"
-        return 1
-    fi
-
-    echo -e "\e[32mJSON syntax validation passed\e[0m"
-    return 0
-}
+#!/bin/bash
 
 checkFiles() {
 echo -e "\e[36m##################################################################################################\e[0m"
@@ -129,5 +77,5 @@ else
     exit 1
 fi
 }
-validateJson
+
 checkFiles
