@@ -64,7 +64,7 @@ The HardwareId, FriendlyNameId, and VID_PID can be extracted from the device man
 | Friendly name  | FriendlyNameId |
 | Parent         | VID_PID        |
 
-The VDI_PID must be extracted from the "Parent" value in device manager:
+The VID_PID must be extracted from the "Parent" value in device manager:
 
 <br>![image](https://user-images.githubusercontent.com/33558203/188000472-a10daed0-1e6c-48aa-acce-edbd9de20122.png)<br>
 
