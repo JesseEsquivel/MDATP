@@ -24,7 +24,7 @@
 ##################################################################################################################
 
 .SYNOPSIS
-Exports Microsoft Defender XDR custom detection rules from the DoD portal.
+Exports Microsoft Defender XDR custom detection rules from the portal.
 
 .DESCRIPTION
 Launches Microsoft Edge, uses the authenticated Defender portal session to
@@ -35,6 +35,13 @@ PowerShell 5.1.
 .PARAMETER TenantId
 Specifies the Microsoft Entra tenant ID used to open the Defender portal.
 This parameter is required.
+
+.PARAMETER UserPrincipalName
+Requests this account at Microsoft sign in using login_hint and prompt=login.
+Uses a new isolated profile without importing browser authentication. Requires
+you to confirm the account shown in Defender before exporting. This is a user
+confirmation, not automatic verification of the portal identity. Cannot override
+organizational authentication policy. Does not require InPrivate browsing.
 
 .PARAMETER DetectionNames
 Specifies which custom detection rules to export by exact name. Provide either
@@ -49,6 +56,8 @@ the script's exports directory.
 .PARAMETER ProfilePath
 Specifies the isolated Edge user-data directory used by the exporter. The
 default is %LOCALAPPDATA%\Get-CustomDetections\EdgeProfile.
+With UserPrincipalName, the default is a unique directory for this run, and an
+explicit directory must not already exist. Existing profiles are not deleted.
 
 .PARAMETER SelectEdgeProfile
 Imports the Edge profile selected by EdgeProfileDirectory into the isolated
@@ -99,7 +108,19 @@ profile.
 Exports the rules, closes Edge, and removes the isolated profile and its
 authentication artifacts.
 
+.EXAMPLE
+pwsh -NoProfile -File .\Get-CustomDetections.ps1 -TenantId '00000000-0000-0000-0000-000000000000' -UserPrincipalName 'user@example.invalid' -LoginTimeoutSeconds 600 -CaptureSeconds 60
+
+Requests interactive sign in for the specified account without importing an
+Edge profile or using InPrivate. Confirm the email shown in the Defender
+webpage account menu when prompted in PowerShell. A mismatch cancels export.
+
 .NOTES
+Account targeting changes apply only when UserPrincipalName is supplied.
+Only main frame Microsoft authorization requests are changed. Their existing
+client, redirect, tenant, state, nonce, scopes, and PKCE parameters are retained.
+No passwords or authentication tokens are requested on the command line.
+
 The Defender portal's internal endpoints are not a public API contract and can
 change. Exported rule queries and configuration should be treated as
 security-sensitive.
@@ -110,6 +131,9 @@ security-sensitive.
 param(
     [Parameter(Mandatory = $true)]
     [Guid]$TenantId,
+
+    [ValidatePattern('^[^@\s]+@[^@\s]+$')]
+    [string]$UserPrincipalName,
 
     [Alias('CustomDetectionNames')]
     [string[]]$DetectionNames,
@@ -137,14 +161,27 @@ param(
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
+if ($UserPrincipalName -and ($SelectEdgeProfile -or $EdgeProfileDirectory -or $ResetProfile)) {
+    throw 'With UserPrincipalName, omit SelectEdgeProfile, EdgeProfileDirectory, and ResetProfile. Account selection uses a new isolated profile.'
+}
+
 if ([string]::IsNullOrWhiteSpace($OutputPath)) {
     $OutputPath = Join-Path $PSScriptRoot ('exports\{0:yyyyMMdd-HHmmss}' -f (Get-Date))
 }
 if ([string]::IsNullOrWhiteSpace($ProfilePath)) {
-    $ProfilePath = Join-Path $env:LOCALAPPDATA 'Get-CustomDetections\EdgeProfile'
+    $profileDirectory = if ($UserPrincipalName) {
+        'Get-CustomDetections\TargetUser-' + [Guid]::NewGuid().ToString('N')
+    }
+    else {
+        'Get-CustomDetections\EdgeProfile'
+    }
+    $ProfilePath = Join-Path $env:LOCALAPPDATA $profileDirectory
 }
 $OutputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputPath)
 $ProfilePath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ProfilePath)
+if ($UserPrincipalName -and (Test-Path -LiteralPath $ProfilePath)) {
+    throw 'With UserPrincipalName, ProfilePath must be a new directory. Omit ProfilePath to create one automatically.'
+}
 $portalUrl = 'https://security.apps.mil/v2/custom_detection?tid={0}' -f
     [Uri]::EscapeDataString($TenantId.ToString('D'))
 
@@ -708,10 +745,12 @@ function Copy-EdgeProfile {
         throw "The Edge profile directory '$sourceProfilePath' does not exist."
     }
 
-    $runningEdge = @(Get-Process -Name msedge -ErrorAction SilentlyContinue)
+    $currentSessionId = (Get-Process -Id $PID).SessionId
+    $runningEdge = @(Get-Process -Name msedge -ErrorAction SilentlyContinue |
+        Where-Object { $_.SessionId -eq $currentSessionId })
     if ($runningEdge.Count -gt 0) {
         $processIds = ($runningEdge | Select-Object -ExpandProperty Id) -join ', '
-        throw "Close all Microsoft Edge windows before importing a profile. Running Edge process IDs: $processIds"
+        throw "Close Microsoft Edge windows in your own Windows session before importing a profile. Running Edge process IDs in this session: $processIds"
     }
 
     New-Item -ItemType Directory -Path $DestinationRoot -Force | Out-Null
@@ -772,6 +811,84 @@ function Get-CdpEvents {
     }
 }
 
+function Get-TargetUserAuthorizationUrl {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Url,
+
+        [Parameter(Mandatory = $true)]
+        [string]$UserPrincipalName
+    )
+
+    $uri = $null
+    if (-not [Uri]::TryCreate($Url, [UriKind]::Absolute, [ref]$uri) -or
+        $uri.Scheme -ne 'https' -or -not $uri.IsDefaultPort -or
+        $uri.Host -notin @('login.microsoftonline.us', 'login.microsoftonline.com') -or
+        $uri.AbsolutePath -notmatch '^/[^/]+/oauth2/(v2\.0/)?authorize/?$') {
+        return $null
+    }
+
+    $parameters = New-Object System.Collections.Generic.List[string]
+    foreach ($pair in $uri.Query.TrimStart('?').Split('&')) {
+        if ([string]::IsNullOrEmpty($pair)) {
+            continue
+        }
+        $name = [Uri]::UnescapeDataString(($pair -split '=', 2)[0].Replace('+', ' '))
+        if ($name -notin @('login_hint', 'domain_hint', 'prompt', 'sid')) {
+            $parameters.Add($pair)
+        }
+    }
+    $parameters.Add('prompt=login')
+    $parameters.Add('login_hint=' + [Uri]::EscapeDataString($UserPrincipalName))
+    $builder = New-Object UriBuilder $uri
+    $builder.Query = $parameters -join '&'
+    return $builder.Uri.AbsoluteUri
+}
+
+function Complete-TargetUserRequest {
+    param(
+        [Parameter(Mandatory = $true)]
+        [CustomDetections.CdpClient]$Client,
+
+        [Parameter(Mandatory = $true)]
+        [object]$Event,
+
+        [Parameter(Mandatory = $true)]
+        [hashtable]$AuthenticationState
+    )
+
+    $parameters = @{ requestId = [string]$Event.params.requestId }
+    if ($Event.params.frameId -eq $AuthenticationState.FrameId -and
+        $Event.params.resourceType -eq 'Document') {
+        $targetUrl = Get-TargetUserAuthorizationUrl `
+            -Url ([string]$Event.params.request.url) `
+            -UserPrincipalName $AuthenticationState.UserPrincipalName
+        if ($targetUrl) {
+            if ($Event.params.request.method -ne 'GET') {
+                throw 'Account targeting encountered an unsupported authorization request method. No export was performed.'
+            }
+            $parameters.url = $targetUrl
+            $AuthenticationState.AuthorizationRequests++
+            Write-Verbose 'Requesting an interactive Microsoft sign in for the selected account.'
+        }
+    }
+    Invoke-CdpCommand -Client $Client -Method 'Fetch.continueRequest' -Parameters $parameters | Out-Null
+}
+
+function Confirm-TargetUser {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$UserPrincipalName
+    )
+
+    Write-Host 'Open the account menu INSIDE the Defender webpage, not the Edge toolbar.' -ForegroundColor Cyan
+    Write-Host "Confirm that Defender shows '$UserPrincipalName'. No rules have been exported yet." -ForegroundColor Cyan
+    $observedUser = Read-Host 'Enter the full account email shown inside Defender, or enter CANCEL'
+    if (-not [string]::Equals($observedUser.Trim(), $UserPrincipalName, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'The confirmed Defender account did not match the requested account. No export was performed.'
+    }
+}
+
 function Add-NetworkEvents {
     param(
         [Parameter(Mandatory = $true)]
@@ -781,10 +898,24 @@ function Add-NetworkEvents {
         [hashtable]$Requests,
 
         [Parameter(Mandatory = $true)]
-        [hashtable]$Responses
+        [hashtable]$Responses,
+
+        [hashtable]$AuthenticationState
     )
 
     foreach ($event in @(Get-CdpEvents -Client $Client)) {
+        if ($event.method -eq 'Fetch.requestPaused') {
+            if ($null -eq $AuthenticationState) {
+                throw 'An intercepted authentication request has no account selection context.'
+            }
+            if (-not $AuthenticationState.InterceptionEnabled) {
+                Write-Verbose 'Skipping a queued sign in event already resumed by Fetch.disable.'
+                continue
+            }
+            Complete-TargetUserRequest -Client $Client -Event $event -AuthenticationState $AuthenticationState
+            continue
+        }
+
         if ($event.method -eq 'Network.requestWillBeSent') {
             $Requests[[string]$event.params.requestId] = $event.params.request
             continue
@@ -1000,6 +1131,7 @@ $edgeProcess = $null
 $client = $null
 $requests = @{}
 $responses = @{}
+$authenticationState = $null
 
 try {
     $browserUserDataPath = $ProfilePath
@@ -1073,9 +1205,35 @@ try {
         maxPostDataSize = 1000000
     } | Out-Null
 
-    Invoke-CdpCommand -Client $client -Method 'Page.navigate' -Parameters @{
-        url = $portalUrl
-    } | Out-Null
+    if ($UserPrincipalName) {
+        $frameTree = Invoke-CdpCommand -Client $client -Method 'Page.getFrameTree'
+        $authenticationState = @{
+            FrameId = [string]$frameTree.frameTree.frame.id
+            UserPrincipalName = $UserPrincipalName
+            AuthorizationRequests = 0
+            InterceptionEnabled = $true
+        }
+        Invoke-CdpCommand -Client $client -Method 'Fetch.enable' -Parameters @{
+            patterns = @(
+                @{ urlPattern = 'https://login.microsoftonline.us/*'; resourceType = 'Document'; requestStage = 'Request' },
+                @{ urlPattern = 'https://login.microsoftonline.com/*'; resourceType = 'Document'; requestStage = 'Request' }
+            )
+        } | Out-Null
+
+        # Return before navigation so the event loop can resume paused sign in requests.
+        $portalUrlJson = ConvertTo-Json -InputObject $portalUrl -Compress
+        Invoke-CdpCommand -Client $client -Method 'Runtime.evaluate' -Parameters @{
+            expression = "setTimeout(() => location.assign($portalUrlJson), 100); true"
+            returnByValue = $true
+        } | Out-Null
+        Write-Host "Sign in as '$UserPrincipalName' and complete any required MFA." -ForegroundColor Cyan
+        Write-Warning 'Account targeting cannot override organization policy. Do not approve export if Defender shows another account.'
+    }
+    else {
+        Invoke-CdpCommand -Client $client -Method 'Page.navigate' -Parameters @{
+            url = $portalUrl
+        } | Out-Null
+    }
 
     Write-Host 'Microsoft Edge is open. Complete sign-in if prompted.' -ForegroundColor Cyan
     Write-Host 'The exporter will continue when the custom detections page has loaded.' -ForegroundColor Cyan
@@ -1083,11 +1241,22 @@ try {
     $loginDeadline = (Get-Date).AddSeconds($LoginTimeoutSeconds)
     $pageReady = $false
     while ((Get-Date) -lt $loginDeadline) {
-        Add-NetworkEvents -Client $client -Requests $requests -Responses $responses
-        $pageState = Get-PageState -Client $client
+        Add-NetworkEvents -Client $client -Requests $requests -Responses $responses -AuthenticationState $authenticationState
+        try {
+            $pageState = Get-PageState -Client $client
+        }
+        catch {
+            if ($UserPrincipalName -and $_.Exception.Message -match 'Execution context was destroyed|Cannot find context|Cannot find default execution context') {
+                Write-Verbose 'The sign in page is navigating. Waiting for its next execution context.'
+                Start-Sleep -Milliseconds 200
+                continue
+            }
+            throw
+        }
 
         if ($pageState.url -match '^https://security\.apps\.mil/v2/custom_detection' -and
-            $pageState.readyState -eq 'complete') {
+            $pageState.readyState -eq 'complete' -and
+            (-not $UserPrincipalName -or $authenticationState.AuthorizationRequests -gt 0)) {
             $pageReady = $true
             break
         }
@@ -1096,13 +1265,24 @@ try {
     }
 
     if (-not $pageReady) {
-        throw "Timed out after $LoginTimeoutSeconds seconds waiting for the custom detections page."
+        if ($UserPrincipalName -and $authenticationState.AuthorizationRequests -eq 0) {
+            throw 'No supported interactive Microsoft authorization request was observed before the timeout. Account targeting could not be applied. No export was performed.'
+        }
+        throw "Timed out after $LoginTimeoutSeconds seconds waiting for the custom detections page and requested sign in. No export was performed."
+    }
+
+    if ($UserPrincipalName) {
+        Invoke-CdpCommand -Client $client -Method 'Fetch.disable' | Out-Null
+        $authenticationState.InterceptionEnabled = $false
+        $requests.Clear()
+        $responses.Clear()
+        Invoke-CdpCommand -Client $client -Method 'Page.reload' -Parameters @{ ignoreCache = $true } | Out-Null
     }
 
     Write-Host "Waiting up to $CaptureSeconds seconds for the portal rule-list request..." -ForegroundColor Cyan
     $captureDeadline = (Get-Date).AddSeconds($CaptureSeconds)
     while ((Get-Date) -lt $captureDeadline) {
-        Add-NetworkEvents -Client $client -Requests $requests -Responses $responses
+        Add-NetworkEvents -Client $client -Requests $requests -Responses $responses -AuthenticationState $authenticationState
         $listRequestSeen = $requests.GetEnumerator() | Where-Object {
             -not ([string]$_.Key).StartsWith('headers:') -and
             [string]$_.Value.url -match '/huntingService/rules/unified'
@@ -1113,8 +1293,7 @@ try {
         Start-Sleep -Milliseconds 500
     }
 
-    Add-NetworkEvents -Client $client -Requests $requests -Responses $responses
-    Write-Host 'Downloading full details for the selected custom detection rules...' -ForegroundColor Cyan
+    Add-NetworkEvents -Client $client -Requests $requests -Responses $responses -AuthenticationState $authenticationState
     $listRequestEntry = $requests.GetEnumerator() |
         Where-Object {
             -not ([string]$_.Key).StartsWith('headers:') -and
@@ -1125,6 +1304,10 @@ try {
         throw 'The portal did not issue the expected unified rule-list request.'
     }
 
+    if ($UserPrincipalName) {
+        Confirm-TargetUser -UserPrincipalName $UserPrincipalName
+    }
+    Write-Host 'Downloading full details for the selected custom detection rules...' -ForegroundColor Cyan
     $requestId = [string]$listRequestEntry.Key
     $requestHeaders = $requests["headers:$requestId"]
     if ($null -eq $requestHeaders) {
