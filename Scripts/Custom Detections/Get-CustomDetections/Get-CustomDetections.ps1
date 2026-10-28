@@ -24,7 +24,7 @@
 ##################################################################################################################
 
 .SYNOPSIS
-Exports Microsoft Defender XDR custom detection rules from the portal.
+Exports Microsoft Defender XDR custom detection rules from the DoD portal.
 
 .DESCRIPTION
 Launches Microsoft Edge, uses the authenticated Defender portal session to
